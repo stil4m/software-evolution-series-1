@@ -1,4 +1,4 @@
-package nl.mse;
+package nl.mse.loc;
 
 /**
  * This is a comment
