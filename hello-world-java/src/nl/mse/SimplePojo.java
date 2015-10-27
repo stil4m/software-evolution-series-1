@@ -1,4 +1,4 @@
-package nl.stil4m.mse;
+package nl.mse;
 
 public class SimplePojo {
 

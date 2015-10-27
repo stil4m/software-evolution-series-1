@@ -1,10 +1,7 @@
-package nl.stil4m.mse;
+package nl.mse;
 
-public class MethodComment {
+public class WithMethod {
 
-	/**
-	 * This is a comment
-	 */
 	public double doSomething(double x, double y) {
 		return Math.sqrt( Math.pow(x, 2) + Math.pow(y, 2));
 	}
