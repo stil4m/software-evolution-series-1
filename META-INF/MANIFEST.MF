@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: software_evolution_series_1
+Bundle-SymbolicName: software_evolution_series_1
+Bundle-Version: 1.0.0
+Require-Bundle: rascal
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
