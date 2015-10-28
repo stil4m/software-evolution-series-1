@@ -45,10 +45,10 @@ private int complexityOfStatement(Statement statement) {
 		case \if(Expression condition, Statement thenBranch) : {
 			i += 1;
 		}
-		case /^<word:\|\|$>/ : {
+		case /^\|\|$/ : {
 			i += 1;
 		}
-		case /^<word:&&$>/ : {
+		case /^&&$/ : {
 			i += 1;
 		}
 		case \if(Expression condition, Statement thenBranch, Statement elseBranch) : {
