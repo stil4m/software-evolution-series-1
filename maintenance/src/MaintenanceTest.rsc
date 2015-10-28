@@ -21,3 +21,4 @@ test bool testFileLineCount6() = getRelevantLines("MethodComment.java") == 6;
 test bool testFileLineCount7() = getRelevantLines("Robot.java") == 9;
 test bool testFileLineCount8() = getRelevantLines("SimplePojo.java") == 5;
 test bool testFileLineCount9() = getRelevantLines("WithMethod.java") == 6;
+test bool testFileLineCount10() = getRelevantLines("A4.java") == 9;

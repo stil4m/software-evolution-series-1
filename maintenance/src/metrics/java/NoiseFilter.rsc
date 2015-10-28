@@ -1,16 +1,19 @@
 module metrics::java::NoiseFilter
 
-/**
-
-*/
+import IO;
+import String;
 
 alias InludeResult = tuple[bool,bool];
 
 public list[str] filterLines(list[str] input) {
+	println(input);
 	bool inComment = false;
 	return for (line <- input) {
 		<res,inComment> = includeLine(line, inComment);
+		println(line);
+		println(inComment);
 		if (res) {
+			println(line);
 			append line;
 		}
 	}
@@ -21,19 +24,22 @@ public list[str] filterLines(list[str] input) {
  		if (/^[^\*\/]*\*\/\s*$/ := s) {
  			return <false, false>;	
  		}
- 		if (/^[^\*\/]*\*\// := s) {
- 			return <true, false>;
+ 		if (/^<match:[^\*\/]*\*\/>/ := s) {
+ 			return includeLine(replaceFirst(s, match, ""), false);
+ 			//return <true, false>;
 		}
 		return <false, true>;
  	}
  	if (/^\s*($|\/\/)/ := s) {
  		return <false, inComment>;
  	}
- 	if (/^\s*\/\*/ := s) {
- 		return <false, true>;
+
+ 	if (/<match:^\s*\/\*>/ := s) {
+ 		return includeLine(replaceFirst(s, match, ""), true);
  	}
- 	if (/\/\*/ := s) {
- 		return <true, true>;
+ 	if (/<match:\/\*>/ := s) {
+ 		<_, v> = includeLine(replaceFirst(s, match, ""), true);
+ 		return <true, v>;
  	}
  	return <true, false>;
 }
@@ -56,8 +62,13 @@ test bool includeLine14() = includeLine("abc */", false) == <true, false>;
 test bool includeLine15() = includeLine("abc */", true) == <false, false>;
 test bool includeLine16() = includeLine("*/ x + y", false) == <true, false>;
 test bool includeLine17() = includeLine("*/ x + y", true) == <true, false>;
+test bool includeLine18() = includeLine("/* foo */", false) == <false, false>;
 
 test bool filterLines1() = filterLines(["//abc"]) == [];
 test bool filterLines2() = filterLines(["foo", "//abc", "bar"]) == ["foo","bar"];
 test bool filterLines3() = filterLines(["/*", "foo", "*/"]) == [];
 test bool filterLines4() = filterLines(["// /*", "foo", "*/"]) == ["foo", "*/"];
+test bool filterLines5() = filterLines(["/*", "*", "*/ /* */", "a"]) == ["a"];
+test bool filterLines6() = filterLines(["/* lets make a party*/    if(true){","    //eyy","	/*","	 * ","	 */ /* */","   }","  }","}"]) == ["/* let */ if(true){", "}"];
+
+
