@@ -6,14 +6,10 @@ import String;
 alias InludeResult = tuple[bool,bool];
 
 public list[str] filterLines(list[str] input) {
-	println(input);
 	bool inComment = false;
 	return for (line <- input) {
 		<res,inComment> = includeLine(line, inComment);
-		println(line);
-		println(inComment);
 		if (res) {
-			println(line);
 			append line;
 		}
 	}
@@ -69,6 +65,7 @@ test bool filterLines2() = filterLines(["foo", "//abc", "bar"]) == ["foo","bar"]
 test bool filterLines3() = filterLines(["/*", "foo", "*/"]) == [];
 test bool filterLines4() = filterLines(["// /*", "foo", "*/"]) == ["foo", "*/"];
 test bool filterLines5() = filterLines(["/*", "*", "*/ /* */", "a"]) == ["a"];
-test bool filterLines6() = filterLines(["/* lets make a party*/    if(true){","    //eyy","	/*","	 * ","	 */ /* */","   }","  }","}"]) == ["/* let */ if(true){", "}"];
+test bool filterLines6() = filterLines(["/* lets make a party*/    if(true){","    //eyy","	/*","	 * ","	 */ /* */","   }","  }","}"]) 
+									== ["/* lets make a party*/    if(true){","   }","  }","}"];
 
 
