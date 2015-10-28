@@ -1,17 +1,19 @@
 module MaintenanceTest
 
 import lang::java::jdt::m3::Core;
+import lang::java::m3::Core;
 import Set;
 import List;
+import IO;
 import metrics::java::LOC;
+import metrics::java::UnitSize;
+import metrics::Constants;
 
-public M3 v =  createM3FromEclipseProject(|project://hello-world-java|);
+public M3 v = createM3FromEclipseProject(|project://hello-world-java|);
 
-public int getRelevantLines(str name) {
-	list[loc] xs = toList({s | <s,_> <- v@containment, s.scheme == "java+compilationUnit", s.file == name});
-	loc x = head(xs);
-	return relevantLines(x);
-}
+public loc getCompilationUnit(str name) = head(toList({s | <s,_> <- v@containment, s.scheme == "java+compilationUnit", s.file == name}));
+public int getRelevantLines(str name) = relevantLines(getCompilationUnit(name));
+
 test bool testFileLineCount1() = getRelevantLines("CommentSameLine.java") == 6;
 test bool testFileLineCount2() = getRelevantLines("ControlLoop.java") == 10;
 test bool testFileLineCount3() = getRelevantLines("ControlLoopWithComment.java") == 10;
