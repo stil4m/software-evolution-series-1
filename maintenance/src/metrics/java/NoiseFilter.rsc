@@ -17,12 +17,11 @@ public list[str] filterLines(list[str] input) {
 
  public InludeResult includeLine(s, inComment) {
  	if (inComment) {
- 		if (/^[^\*\/]*\*\/\s*$/ := s) {
+ 		if (/^((?!\*\/).)*\*\/\s*$/ := s) {
  			return <false, false>;	
  		}
- 		if (/^<match:[^\*\/]*\*\/>/ := s) {
+ 		if (/^<match:((?!\*\/).)*\*\/>/ := s) {
  			return includeLine(replaceFirst(s, match, ""), false);
- 			//return <true, false>;
 		}
 		return <false, true>;
  	}
@@ -30,9 +29,17 @@ public list[str] filterLines(list[str] input) {
  		return <false, inComment>;
  	}
 
+	//Check if line has multi line opening at beginning of line
  	if (/<match:^\s*\/\*>/ := s) {
  		return includeLine(replaceFirst(s, match, ""), true);
  	}
+ 	
+ 	//Replace all string content with empty content to make sure "/*" does not occur
+ 	if (/"<inner:(\\|\"|((?!").))+>"/ := s) {
+ 		return includeLine(replaceFirst(s, inner, ""), false);
+ 	}
+ 	
+ 	//Check if line has opening after content
  	if (/<match:\/\*>/ := s) {
  		<_, v> = includeLine(replaceFirst(s, match, ""), true);
  		return <true, v>;
@@ -59,6 +66,8 @@ test bool includeLine15() = includeLine("abc */", true) == <false, false>;
 test bool includeLine16() = includeLine("*/ x + y", false) == <true, false>;
 test bool includeLine17() = includeLine("*/ x + y", true) == <true, false>;
 test bool includeLine18() = includeLine("/* foo */", false) == <false, false>;
+test bool includeLine19() = includeLine("    /**	List of Columns */", false) == <false, false>;
+test bool includeLine20() = includeLine("\" /* \"", false) == <true, false>;
 
 test bool filterLines1() = filterLines(["//abc"]) == [];
 test bool filterLines2() = filterLines(["foo", "//abc", "bar"]) == ["foo","bar"];
@@ -67,5 +76,9 @@ test bool filterLines4() = filterLines(["// /*", "foo", "*/"]) == ["foo", "*/"];
 test bool filterLines5() = filterLines(["/*", "*", "*/ /* */", "a"]) == ["a"];
 test bool filterLines6() = filterLines(["/* lets make a party*/    if(true){","    //eyy","	/*","	 * ","	 */ /* */","   }","  }","}"]) 
 									== ["/* lets make a party*/    if(true){","   }","  }","}"];
+									
+test bool filterLines7() = filterLines(["    /**	List of Columns */","    final Expressions columnExpressions; "]) 
+									== ["    final Expressions columnExpressions; "];
+									
 
 
