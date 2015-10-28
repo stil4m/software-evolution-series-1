@@ -33,6 +33,9 @@ public void calculateCyclomaticComplexity(M3 v) {
 private int complexityOfStatement(Statement statement) {
 	int i = 1;
 	visit (statement) {
+		case \foreach(Declaration parameter, Expression collection, Statement body) : {
+			i += 1;
+		}
 		case \for(list[Expression] initializers, Expression condition, list[Expression] updaters, Statement body) : {
 			i += 1;
 		}
