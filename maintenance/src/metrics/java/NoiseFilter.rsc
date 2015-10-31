@@ -5,13 +5,15 @@ import String;
 
 alias InludeResult = tuple[bool,bool];
 
-public list[str] filterLines(list[str] input) {
+public lrel[int,str] filterLines(list[str] input) {
 	bool inComment = false;
+	int i = 0;
 	return for (line <- input) {
 		<res,inComment> = includeLine(line, inComment);
 		if (res) {
-			append line;
+			append <i,line>;
 		}
+		i += 1;
 	}
 }
 
@@ -70,15 +72,15 @@ test bool includeLine19() = includeLine("    /**	List of Columns */", false) == 
 test bool includeLine20() = includeLine("\" /* \"", false) == <true, false>;
 
 test bool filterLines1() = filterLines(["//abc"]) == [];
-test bool filterLines2() = filterLines(["foo", "//abc", "bar"]) == ["foo","bar"];
+test bool filterLines2() = filterLines(["foo", "//abc", "bar"]) == [<0,"foo">,<2,"bar">];
 test bool filterLines3() = filterLines(["/*", "foo", "*/"]) == [];
-test bool filterLines4() = filterLines(["// /*", "foo", "*/"]) == ["foo", "*/"];
-test bool filterLines5() = filterLines(["/*", "*", "*/ /* */", "a"]) == ["a"];
+test bool filterLines4() = filterLines(["// /*", "foo", "*/"]) == [<1,"foo">, <2,"*/">];
+test bool filterLines5() = filterLines(["/*", "*", "*/ /* */", "a"]) == [<3,"a">];
 test bool filterLines6() = filterLines(["/* lets make a party*/    if(true){","    //eyy","	/*","	 * ","	 */ /* */","   }","  }","}"]) 
-									== ["/* lets make a party*/    if(true){","   }","  }","}"];
+									== [<0,"/* lets make a party*/    if(true){">,<5,"   }">, <6,"  }">,<7,"}">];
 									
 test bool filterLines7() = filterLines(["    /**	List of Columns */","    final Expressions columnExpressions; "]) 
-									== ["    final Expressions columnExpressions; "];
+									== [<1,"    final Expressions columnExpressions; ">];
 									
 
 

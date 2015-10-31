@@ -10,9 +10,10 @@ import List;
 import Type;
 import Set;
 import IO;
+import String;
 
 public value main() {
-	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
+	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 
 	//model = createM3FromEclipseFile(|project://hello-world-java/src/nl/mse/complexity/Ternary.java|);	
 	//iprintln(createM3FromEclipseFile(|project://hello-world-java/src/nl/mse/complexity/Ternary.java|));
@@ -37,7 +38,7 @@ public ProjectAnalysis analyseProject(M3 model) {
 }
 
 public FileAnalysis analyseFile(loc cu, M3 model) {
-	list[str] lines = relevantLines(cu);
+	lrel[int,str] lines = [ <c,trim(s)> | <c,s> <- relevantLines(cu)];
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 
 	list[ClassAnalysis] result = [];
@@ -47,7 +48,7 @@ public FileAnalysis analyseFile(loc cu, M3 model) {
 		result += [ analyseClass(class, model)];
 	}
 	
-	return <size(lines),result,cu>;
+	return <size(lines),result, lines, cu>;
 }
 
 public ClassAnalysis analyseClass(loc cl, M3 model) {

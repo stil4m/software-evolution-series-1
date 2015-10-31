@@ -33,6 +33,6 @@ public int relevantLineCount(loc l) {
 	return res;
 }
 
-public list[str] relevantLines(loc l) {
+public lrel[int,str] relevantLines(loc l) {
 	return filterLines(readFileLines(l));
 }
