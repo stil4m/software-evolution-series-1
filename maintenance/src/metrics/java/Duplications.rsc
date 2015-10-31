@@ -18,11 +18,7 @@ public void computeDuplications(ProjectAnalysis p) {
 		<_, _, lines, _> = f;
 		int index = 0;	
 		for (<c,s> <- lines) {
-			if (db[s]?) {
-				db[s] += <f, index>;
-			} else {
-				db[s] = [<f, index>];
-			}
+			db = assocMap(db,s,<f,index>);
 			index += 1;
 		}
 	}
@@ -33,6 +29,9 @@ public void computeDuplications(ProjectAnalysis p) {
 }
 
 public void analyzeKey(str key, LineDB db) {
+	if(size(db[key]) < 2) {
+		return;	
+	}
 	DupTree t = computeDupTree(key, db[key]);
 	println("Key: <key>");
 	println("  Depth <depthForTree(t)>");
@@ -52,11 +51,7 @@ public DupTree computeDupTree(str key, LineRefs refs) {
 	for (<f,c> <- withNextLine(refs)) {
 		<_, _, lines, _> = f;
 		<n,nextKey> = lines[c+1];
-		if (x[nextKey]?) {
-			x[nextKey] += <f,c+1>;
-		} else {
-			x[nextKey] = [<f,c+1>];
-		}
+		x = assocMap(x,nextKey,<f,c+1>);
 	}
 	children = for (y <- x) {
 		if (size(x[y]) > 1) {
@@ -64,6 +59,15 @@ public DupTree computeDupTree(str key, LineRefs refs) {
 		}
 	}
 	return Node(key, refs, children);
+}
+
+private map[&T,list[&S]] assocMap(map[&T,list[&S]] m, &T t, &S s) {
+	if (m[t]?) {
+		return m[t] += s;
+	} else {
+		m[t] = [s];
+		return m;
+	}
 }
 
 private LineRefs withNextLine(LineRefs refs) = [<f,i> | <f,i> <- refs, fileAnalysisHasLine(f, i+1)];
