@@ -3,7 +3,7 @@ package nl.mse.dup;
 public class DuplicateFoo2 {
 
 	public Class<?> whoami() {
-		return DuplicateFoo1.class;
+		return DuplicateFoo2.class;
 	}
 	
 	public int foo (int i) {
