@@ -8,7 +8,7 @@ import IO;
 
 public Rating calculateUnitSize(M3 model) {
 	set[loc] methods = { m | <m,_> <- model@containment, isMethod(m) };
-	map[loc,int] methodSizes = ( methodLoc:relevantLines(methodLoc) | methodLoc <- methods );
+	map[loc,int] methodSizes = ( methodLoc:relevantLineCount(methodLoc) | methodLoc <- methods );
 	
 	RiskProfile riskProfile = createRiskProfile(methodSizes);
 	int totalLOC = calculateLOC(model);

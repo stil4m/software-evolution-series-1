@@ -23,14 +23,16 @@ public int calculateLOC(M3 v) {
 	rel[loc,loc] containments = v@containment;
 	set[loc] compilationUnits = {s | <s,_> <- containments, s.scheme == "java+compilationUnit"};
 	
-	lrel[int,loc] result = sort([<relevantLines(s), s> | s <- compilationUnits]);
+	lrel[int,loc] result = sort([<relevantLineCount(s), s> | s <- compilationUnits]);
 	return sum([0] + [s | <s,l> <- result]);
 }
 
 
-
-public int relevantLines(loc l) {
-	list[str] lin = filterLines(readFileLines(l));
-	int res = size(lin);
+public int relevantLineCount(loc l) {
+	int res = size(relevantLines(l));
 	return res;
+}
+
+public list[str] relevantLines(loc l) {
+	return filterLines(readFileLines(l));
 }

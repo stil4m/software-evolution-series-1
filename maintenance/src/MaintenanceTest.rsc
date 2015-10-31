@@ -12,7 +12,7 @@ import metrics::Constants;
 public M3 v = createM3FromEclipseProject(|project://hello-world-java|);
 
 public loc getCompilationUnit(str name) = head(toList({s | <s,_> <- v@containment, s.scheme == "java+compilationUnit", s.file == name}));
-public int getRelevantLines(str name) = relevantLines(getCompilationUnit(name));
+public int getRelevantLines(str name) = relevantLineCount(getCompilationUnit(name));
 
 test bool testFileLineCount1() = getRelevantLines("CommentSameLine.java") == 6;
 test bool testFileLineCount2() = getRelevantLines("ControlLoop.java") == 10;

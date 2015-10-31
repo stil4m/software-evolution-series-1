@@ -12,7 +12,7 @@ import Set;
 import IO;
 
 public value main() {
-	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 
 	//model = createM3FromEclipseFile(|project://hello-world-java/src/nl/mse/complexity/Ternary.java|);	
 	//iprintln(createM3FromEclipseFile(|project://hello-world-java/src/nl/mse/complexity/Ternary.java|));
@@ -37,7 +37,7 @@ public ProjectAnalysis analyseProject(M3 model) {
 }
 
 public FileAnalysis analyseFile(loc cu, M3 model) {
-	int LOC = relevantLines(cu);
+	list[str] lines = relevantLines(cu);
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 
 	list[ClassAnalysis] result = [];
@@ -47,7 +47,7 @@ public FileAnalysis analyseFile(loc cu, M3 model) {
 		result += [ analyseClass(class, model)];
 	}
 	
-	return <LOC,result,cu>;
+	return <size(lines),result,cu>;
 }
 
 public ClassAnalysis analyseClass(loc cl, M3 model) {
@@ -62,7 +62,7 @@ public ClassAnalysis analyseClass(loc cl, M3 model) {
 
 public MethodAnalysis analyseMethod(loc m, M3 model) {
 	// TODO improve this.
-	int unitSize = relevantLines(m);
+	int unitSize = relevantLineCount(m);
 	int complexity = calculateComplexityForMethod(m, model);
 
 	return <unitSize, complexity,m>;
