@@ -26,7 +26,7 @@ public list[str] filterLines(list[str] input) {
 		return <false, true>;
  	}
  	if (/^\s*($|\/\/)/ := s) {
- 		return <false, inComment>;
+ 		return <false, false>;
  	}
 
 	//Check if line has multi line opening at beginning of line
