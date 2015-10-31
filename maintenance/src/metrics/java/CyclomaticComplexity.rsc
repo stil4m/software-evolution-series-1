@@ -22,13 +22,21 @@ public void calculateCyclomaticComplexity(M3 v) {
 		println(c.path);
 		ms = methods(v, c);
 		for(m <- ms) {
-			Declaration t = getMethodASTEclipse(m, model=v);
-			if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
-				println(complexityOfStatement(impl));
-			}
+			println(calculateComplexityForMethod(m, v));
 		}
 	}
 }
+
+public int calculateComplexityForMethod(loc m, M3 model)
+{
+	Declaration t = getMethodASTEclipse(m, model=model);
+	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
+		return complexityOfStatement(impl);
+	} 
+	
+	return 0;
+}
+
 
 private int complexityOfStatement(Statement statement) {
 	int i = 1;
