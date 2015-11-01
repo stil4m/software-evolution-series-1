@@ -4,50 +4,78 @@ module metrics::java::Duplications
 import Domain;
 import IO;
 import List;
+import DateTime;
+import Map;
 
 alias LineRefs = lrel[FileAnalysis, int];
 alias LineDB = map[str,LineRefs];
 
-data DupTree = Node(str key, LineRefs refs, list[DupTree] children); 
+data DupTree = Node(str key, LineRefs refs, list[DupTree] children, int knownDepth); 
 
 public void computeDuplications(ProjectAnalysis p) {
 	
 	LineDB db = ();
-	
 	for(FileAnalysis f <- p) {
 		<_, _, lines, _> = f;
-		int index = 0;	
+		int index = 0;
+		int max = size(lines) - 5;
+			
 		for (<c,s> <- lines) {
 			db = assocMap(db,s,<f,index>);
 			index += 1;
+			if (index == max) {
+				break;
+			}
 		}
 	}
 	
+	db = (k : db[k] | k <- db, size(db[k]) >= 2);
+	int dbSize = size(db);
+	int keyIndex = 0;
+	map[str,int] depthDb = ();
 	for ( k <- db) {
-		analyzeKey(k, db);
+		keyIndex += 1;
+		println("<printDateTime(now())> Analyze key <keyIndex>/<dbSize>");  
+		int depth = analyzeKey(k, db, depthDb);
+		depthDb[k] = depth;
 	}
+	
+	depthDb = ( k : depthDb[k] | k <- depthDb, depthDb[k] >= 6);
+	for (k <- depthDb) {
+		println("<depthDb[k]>  |  <k>");
+	}
+	//iprintln(depthDb);
 }
 
-public void analyzeKey(str key, LineDB db) {
-	if(size(db[key]) < 2) {
-		return;	
-	}
-	DupTree t = computeDupTree(key, db[key]);
-	println("Key: <key>");
-	println("  Depth <depthForTree(t)>");
+public int analyzeKey(str key, LineDB db, map[str,int] depthDb) {
+	//if(size(db[key]) < 2) {
+	//	return;	
+	//}
+	DupTree t = computeDupTree(key, db[key], db, depthDb);
+	println("<printDateTime(now())> Duplicate Line: <key>");
+	int depth = depthForTree(t);
+	return depth;
+	//println("  Depth <depthForTree(t)>");
 }
 
 public int depthForTree(DupTree t) {
-	if ( Node(_,_,children) := t) {
-		return 1 + max(0 + [depthForTree(s) | s <- children]);
+	if ( Node(_,_,children, known) := t) {
+		if (known == -1) {
+			return 1 + max(0 + [depthForTree(s) | s <- children]);
+		} else {
+			return known;
+		}
 	} else {
 		return 1;
 	}	
 }
 
-public DupTree computeDupTree(str key, LineRefs refs) {
+public DupTree computeDupTree(str key, LineRefs refs, LineDB db, map[str,int] depthDb) {
 	map[str,lrel[FileAnalysis,int]] x = ();
 	
+	if (depthDb[key]? && refs == db[key]) {
+		return Node(key, refs, [], depthDb[key]);  
+	}
 	for (<f,c> <- withNextLine(refs)) {
 		<_, _, lines, _> = f;
 		<n,nextKey> = lines[c+1];
@@ -55,10 +83,10 @@ public DupTree computeDupTree(str key, LineRefs refs) {
 	}
 	children = for (y <- x) {
 		if (size(x[y]) > 1) {
-			append computeDupTree(y, x[y]);
+			append computeDupTree(y, x[y], db, depthDb);
 		}
 	}
-	return Node(key, refs, children);
+	return Node(key, refs, children, -1);
 }
 
 private map[&T,list[&S]] assocMap(map[&T,list[&S]] m, &T t, &S s) {
