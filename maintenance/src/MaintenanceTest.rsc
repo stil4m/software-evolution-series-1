@@ -31,8 +31,6 @@ public loc getMethod(str className, str methodName) {
 	throw("Unknown method \<<methodName>\> in class \<<className>\>");
 }
 
-
-
 public int getRelevantLines(str name) = relevantLineCount(getCompilationUnit(name));
 
 test bool testFileLineCount1() = getRelevantLines("CommentSameLine.java") == 6;
@@ -51,7 +49,7 @@ public int getCyclomaticComplexity(str className, str methodName) = calculateCom
 
 test bool testCyclometicComplexity1() = getCyclomaticComplexity("DoWhileStatement", "doSomething") == 2;
 test bool testCyclometicComplexity2() = getCyclomaticComplexity("Ternary", "ternaryFoo") == 3 ;
-test bool testCyclometicComplexity2() = getCyclomaticComplexity("ComplexMethod", "foo") == 6 ;
+test bool testCyclometicComplexity3() = getCyclomaticComplexity("ComplexMethod", "foo") == 6 ;
 
 
 test bool testShouldAnalyseInnerClasses() = [<9,2,_*>,<9,6,_*>] := analyseClass(getClass("InnerClass"),v);
