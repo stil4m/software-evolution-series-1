@@ -21,10 +21,18 @@ public loc exportPath = |project://maintenance/export.json|;
 public value mainFunction() {
 	println("<printDateTime(now())> Obtain M3 Model");
 	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
-	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	m3Model = createM3FromEclipseProject(|project://hsqldb|);
+	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	doAnalysis(m3Model);
 	return "OK";
+}
+
+public int getTotalLoc(ProjectAnalysis p) {
+	int totalLOC = 0;
+	for(fileAnalysis <- p) {
+		totalLOC += fileAnalysis[0];	
+	}
+	return totalLOC;
 }
 
 public void doAnalysis(M3 m3Model) {
@@ -32,9 +40,13 @@ public void doAnalysis(M3 m3Model) {
 	ProjectAnalysis p =  analyseProject(m3Model);
 	
 	println("<printDateTime(now())> Did analysis. Find some duplications!!!");
+	
 	//iprintln(p);
 	//exportToFile(p,exportPath);
 	computeDuplications(p);
+	iprintln(getTotalLoc(p));
+	
+	//computeDuplications(p);
 }
 
 public ProjectAnalysis analyseProject(M3 model) {

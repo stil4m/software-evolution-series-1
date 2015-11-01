@@ -9,7 +9,7 @@ import Type;
 import String;
 import Node;
 
-//http://gmetrics.sourceforge.net/gmetrics-CyclomaticComplexityMetric.html
+// http://gmetrics.sourceforge.net/gmetrics-CyclomaticComplexityMetric.html
 public void runCC() {
 	v =  createM3FromEclipseProject(|project://hello-world-java|);
 	calculateCyclomaticComplexity(v);
