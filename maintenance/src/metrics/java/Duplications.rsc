@@ -12,13 +12,15 @@ alias LineDB = map[str,LineRefs];
 
 data DupTree = Node(str key, LineRefs refs, list[DupTree] children, int knownDepth); 
 
+private int DUPLICATION_LENGTH = 6;
+
 public void computeDuplications(ProjectAnalysis p) {
 	
 	LineDB db = ();
 	for(FileAnalysis f <- p) {
 		<_, _, lines, _> = f;
 		int index = 0;
-		int max = size(lines) - 5;
+		int max = size(lines) - (DUPLICATION_LENGTH - 1);
 			
 		for (<c,s> <- lines) {
 			db = assocMap(db,s,<f,index>);
@@ -40,22 +42,14 @@ public void computeDuplications(ProjectAnalysis p) {
 		depthDb[k] = depth;
 	}
 	
-	depthDb = ( k : depthDb[k] | k <- depthDb, depthDb[k] >= 6);
-	for (k <- depthDb) {
-		println("<depthDb[k]>  |  <k>");
-	}
-	//iprintln(depthDb);
+	depthDb = ( k : depthDb[k] | k <- depthDb, depthDb[k] >= DUPLICATION_LENGTH);
 }
 
 public int analyzeKey(str key, LineDB db, map[str,int] depthDb) {
-	//if(size(db[key]) < 2) {
-	//	return;	
-	//}
 	DupTree t = computeDupTree(key, db[key], db, depthDb);
 	println("<printDateTime(now())> Duplicate Line: <key>");
 	int depth = depthForTree(t);
 	return depth;
-	//println("  Depth <depthForTree(t)>");
 }
 
 public int depthForTree(DupTree t) {
