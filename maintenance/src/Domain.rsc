@@ -6,7 +6,7 @@ data Rating = plusPlus() | plus() | neutral() | minus() | minusMinus();
 
 alias RiskProfile = map[Risk,int];
 
-alias MethodAnalysis = tuple[int,int,loc];
+alias MethodAnalysis = tuple[int size,int cc, loc location];
 
 alias ClassAnalysis = list[MethodAnalysis];
 
