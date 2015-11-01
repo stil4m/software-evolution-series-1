@@ -71,6 +71,9 @@ private int complexityOfStatement(Statement statement) {
 		case \catch(Declaration exception, Statement body) : {
 			i += 1;
 		}
+		case \conditional(Expression expression, Expression thenBranch, Expression elseBranch) : {
+			i += 1; 
+		}
 	}
 	return i;
 }
