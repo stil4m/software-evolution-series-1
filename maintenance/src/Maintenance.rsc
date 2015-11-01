@@ -53,7 +53,7 @@ public FileAnalysis analyseFile(loc cu, M3 model) {
 	list[ClassAnalysis] result = [];
 	
 	for(class <- classes) {
-		// TODO, figure out why we cant do it with the [].
+		// TODO, figure out why we cant do it without the [].
 		result += [ analyseClass(class, model)];
 	}
 	
@@ -66,7 +66,11 @@ public ClassAnalysis analyseClass(loc cl, M3 model) {
 	for(method <- methods(model,cl)) {
 		result += analyseMethod(method, model);	
 	}
-
+	
+	for(subcl <- nestedClasses(model, cl)) {
+		result += analyseClass(subcl,model);
+	}
+	
 	return result;
 }
 

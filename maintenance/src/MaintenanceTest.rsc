@@ -10,10 +10,14 @@ import metrics::java::LOC;
 import metrics::java::UnitSize;
 import metrics::java::CyclomaticComplexity;
 import metrics::Constants;
+import Maintenance;
+import Domain;
 
 public M3 v = createM3FromEclipseProject(|project://hello-world-java|);
 
 public loc getCompilationUnit(str name) = head(toList({s | <s,_> <- v@containment, s.scheme == "java+compilationUnit", s.file == name}));
+
+public loc getClass(str className) = head(toList({s | s <- classes(v), s.scheme == "java+class", s.file==className}));
 
 public loc getMethod(str className, str methodName) {
 	set[loc] methods = {*methods(v,s) | s <- classes(v), s.scheme == "java+class", s.file==className};
@@ -23,7 +27,11 @@ public loc getMethod(str className, str methodName) {
 			return method;		
 		}
 	}
+	
+	throw("Unknown method \<<methodName>\> in class \<<className>\>");
 }
+
+
 
 public int getRelevantLines(str name) = relevantLineCount(getCompilationUnit(name));
 
@@ -42,5 +50,9 @@ test bool testFileLineCount10() = getRelevantLines("A4.java") == 9;
 public int getCyclomaticComplexity(str className, str methodName) = calculateComplexityForMethod(getMethod(className,methodName),v);
 
 test bool testCyclometicComplexity1() = getCyclomaticComplexity("DoWhileStatement", "doSomething") == 2;
-test bool testCyclometicComplexity2() = getCyclomaticComplexity("Ternary", "ternaryFoo") == 2 ;
+test bool testCyclometicComplexity2() = getCyclomaticComplexity("Ternary", "ternaryFoo") == 3 ;
+test bool testCyclometicComplexity2() = getCyclomaticComplexity("ComplexMethod", "foo") == 6 ;
 
+
+test bool testShouldAnalyseInnerClasses() = [<9,2,_*>,<9,6,_*>] := analyseClass(getClass("InnerClass"),v);
+test bool testShouldAnalyseMethodWithInnerClassCorrectly() = [<19,4,_*>] := analyseClass(getClass("MethodWithAnonymousClass"),v);
