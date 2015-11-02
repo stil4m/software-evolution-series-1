@@ -1,0 +1,21 @@
+{
+  "name": "overview-site",
+  "version": "0.0.0",
+  "homepage": "https://github.com/stil4m/software-evolution-series-1",
+  "authors": [
+    "Mats Stijlaart <m.stijlaart@avisi.nl>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "bootstrap": "~3.3.5",
+    "font-awesome": "~4.4.0"
+  }
+}
