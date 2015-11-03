@@ -28,6 +28,7 @@ public void calculateCyclomaticComplexity(M3 v) {
 }
 
 public int calculateComplexityForMethod(loc m, M3 model) {
+	return 0;
 	Declaration t = getMethodASTEclipse(m, model=model);
 	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
 		return complexityOfStatement(impl);

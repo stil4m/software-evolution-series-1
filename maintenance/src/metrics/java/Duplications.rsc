@@ -12,13 +12,12 @@ import Type;
 alias LineRef = tuple[FileAnalysis, int];
 alias LineRefs = set[LineRef];
 alias LineDB = map[str,LineRefs];
-//alias Duplications = set[LineRefs];
 
 data DupTree = Node(str key, LineRefs refs, list[DupTree] children, int knownDepth); 
 
 private int DUPLICATION_LENGTH = 6;
 
-public void computeDuplications(ProjectAnalysis p) {
+public set[LineRefs] computeDuplications(ProjectAnalysis p) {
 	
 	LineDB db = ();
 	for(FileAnalysis f <- p) {
@@ -36,82 +35,49 @@ public void computeDuplications(ProjectAnalysis p) {
 	set[LineRefs] duplications = {};
 	for ( k <- db) {
 		keyIndex += 1;
-		println("<printDateTime(now())> Analyze key <keyIndex>/<dbSize>");  
-		<depth, newDuplications> = analyzeKey(k, db, duplications);
+		<depth, newDuplications, _> = analyzeKey(k, db, duplications);
 		duplications = newDuplications;
 	}
-	for (d <- duplications) {
-		println("Found duplication");
-		for(<fs, ln> <- d) {
-			<LOC,classes,lines,location> = fs;
-			println("\>\> <ln> - <location.file> `<lines[ln]>` <size(lines)>");
-			//iprintln(lines);
-		}
-		//iprintln(d);
-		//return;
-	}
+	return duplications;
 }
 
-public tuple[bool,set[LineRefs]] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
-	<result, t> = computeDupTree(key, db[key], db, duplications, 1);
-	if (result) {
-		println("<printDateTime(now())> Duplicate Line: <key>");
-	}
-	return <result, t>;
+public tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
+	return computeDupTree(key, db[key], duplications, 1);
 }
 
-public tuple[bool, set[LineRefs]] computeDupTree(str key, LineRefs refs, LineDB db, set[LineRefs] duplications, int currentDepth) {
+public tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs refs, set[LineRefs] duplications, int currentDepth) {
 	bool deepEnough = currentDepth >= DUPLICATION_LENGTH;
 	
 	//Just return if we know the answer
 	if (refs in duplications) {
-		return <true, duplications>;
+		return <true, duplications, refs>;
 	}
 	
 	map[str,LineRefs] x = ();
 	for (<f,c> <- withNextLine(refs)) {
 		<_, _, lines, _> = f;
 		<n,nextKey> = lines[c+1];
-		println("`<lines[c]>` -\> `<lines[c+1]>`");
-		//println(refs);
 		x = assocMap(x,nextKey,<f,c+1>);
 	}
 	
 	set[LineRefs] childrenSets;
 	childrenSets = for (y <- x, size(x[y]) > 1) {
-		<subDeepEnough, duplications> = computeDupTree(y, x[y], db, duplications, currentDepth+1);
+		<subDeepEnough, newDuplications, subChildren> = computeDupTree(y, x[y], duplications, currentDepth+1);
+		duplications = newDuplications;
 		if (subDeepEnough) {
-			//append { <fs,n-1> | <fs,n> <- x[y]};
-			append x[y];
+			append {<f,ln-1> | <f,ln> <- subChildren};
 		}
 	}
 	
 	if (deepEnough) {
 		duplications += {refs};
-		return <true, duplications>;
+		return <true, duplications, refs>;
 	} else if (!isEmpty(childrenSets)) {
-		set[LineRefs] chil = { c | c <- childrenSets};
-		
-		//LineRefs r = ;
-		result = union(chil);
-		println(size(result));
-		if (size(result) == 4) {
-		println("");
-		println("");
-		println("");
-			iprintln(chil);
-		println("");
-		println("");
-		println("");
-			iprintln(result);
-			println("");
-			println("");
-			println("");
-		}
-		duplications += chil; 
-		return <size(childrenSets) != 0, duplications>;
+		children = { c | c <- childrenSets};
+		duplications += children;
+		return <size(childrenSets) != 0, duplications, union(children)>;
 	} else {
-		return <false, duplications>;
+		return <false, duplications, {}>;
 	}
 }
 
@@ -124,9 +90,68 @@ private map[&T,set[&S]] assocMap(map[&T,set[&S]] m, &T t, &S s) {
 	}
 }
 
+private set[str] infoLineRefs(LineRefs l) {
+	return {"(<ln> - <location.file>)" | <<_,_,_,location>,ln> <- l};
+}
 private LineRefs withNextLine(LineRefs refs) = {<f,i> | <f,i> <- refs, fileAnalysisHasLine(f, i+1)};
 
 private bool fileAnalysisHasLine(FileAnalysis f, int ln) {
 	<_, _, lines, _> = f;
 	return ln < size(lines);
+}
+
+public FileAnalysis fileAnalysis1 = <6,[], [
+	<1, "A1">,
+	<2, "A2">,
+	<3, "A3">,
+	<4, "A4">,
+	<5, "A5">,
+	<6, "A6">
+], |file://foo1|>;
+
+public FileAnalysis fileAnalysis2 = <9,[], [
+	<1, "A1">,
+	<2, "A2">,
+	<3, "A3">,
+	<4, "A4">,
+	<5, "A5">,
+	<6, "A6">
+], |file://foo2|>;
+
+public FileAnalysis fileAnalysis3 = <5,[], [
+	<1, "A1">,
+	<2, "A2">,
+	<3, "B3">,
+	<4, "B4">,
+	<5, "B5">
+], |file://foo3|>;
+
+public FileAnalysis fileAnalysis4 = <5,[], [
+	<1, "A1">,
+	<2, "A2">,
+	<3, "B3">,
+	<4, "B4">,
+	<5, "B5">
+], |file://foo4|>;
+
+test bool testDuplicationCalculation() {
+	output = computeDuplications([fileAnalysis1,fileAnalysis2,fileAnalysis3,fileAnalysis4]);
+	return aggregateDuplications(output) == (
+	  |file://foo1|:[0,1,2,3,4,5],
+	  |file://foo2|:[0,1,2,3,4,5]
+	);
+}
+
+public map[loc,list[int]] aggregateDuplications(set[LineRefs] duplications) {
+	LineRefs s = union(duplications);
+	map[loc,set[int]] aggregate = ();
+	for (<<_, _, _, location>, ln> <- s) {
+		if (aggregate[location]?) {
+			aggregate[location] += ln;
+		} else {
+			aggregate[location] = {ln};
+		}
+	}
+	map[loc,list[int]] r = ( k: sort(toList(aggregate[k])) | k <- aggregate );
+	return r;
 }

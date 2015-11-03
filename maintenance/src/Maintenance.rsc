@@ -41,14 +41,15 @@ public void doAnalysis(M3 m3Model) {
 	
 	println("<printDateTime(now())> Did analysis. Find some duplications!!!");
 	
-	computeDuplications(p);
-	iprintln(getTotalLoc(p));
+	set[LineRefs] duplications = computeDuplications(p);
+	println("Duplication size: <size(duplications)>");
+	
+	println(aggregateDuplications(duplications));
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
 	set[loc] compilationUnits = { x| <x,_> <- model@containment, isCompilationUnit(x)
 		//, /src\/org\/hsqldb\/[A-Z]/ := x.path //Will decrease the unit size to around 20%
-		, /DuplicateFoo3/ := x.path || /DuplicateFoo4/ := x.path
 	};
 	println("<printDateTime(now())> Compilation unit size: <size(compilationUnits)>");
 	return [analyseFile(c, model) | c <- compilationUnits];
