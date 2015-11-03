@@ -3,7 +3,6 @@ module Maintenance
 import lang::java::jdt::m3::Core;
 import metrics::java::CyclomaticComplexity;
 import metrics::java::LOC;
-import metrics::Constants;
 import Domain;
 import Export;
 import profiling::Profiler;
@@ -35,7 +34,7 @@ public void doAnalysis(M3 m3Model) {
 	
 	println("<printDateTime(now())> Export to file");
 	
-	exportToFile(p, exportPath);
+	exportToFile(p, projectProfile, exportPath);
 }
 
 public ProjectAnalysis analyseProject(M3 model) {

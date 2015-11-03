@@ -6,12 +6,23 @@ import IO;
 import lang::json::IO;
 import List;
 
-public void exportToFile(ProjectAnalysis p, loc l) {
-	writeFile(l, toJSON(projectAsMap(p), true));
+public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l) {
+	writeFile(l, toJSON((
+		"project" : projectAsMap(p),
+		"profile" : (k : profileToInt(profile[k]) | k <- profile)
+	), true));
 }
 
+public int profileToInt(Profile p) {
+	if (p == plusPlus()) return 5;
+	if (p == plus()) return 4;
+	if (p == neutral()) return 3;
+	if (p == minus()) return 2;
+	return 1;
+}
 public map[str,value] projectAsMap(ProjectAnalysis p) {
 	return (
+		"loc" : p.LOC,
 		"files" : [fileAsMap(f) | f <- p.files]
 	);
 }
