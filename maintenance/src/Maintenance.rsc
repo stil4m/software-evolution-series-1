@@ -2,7 +2,6 @@ module Maintenance
 
 import lang::java::jdt::m3::Core;
 import metrics::java::CyclomaticComplexity;
-import metrics::java::UnitSize;
 import metrics::java::LOC;
 import metrics::Constants;
 import Domain;

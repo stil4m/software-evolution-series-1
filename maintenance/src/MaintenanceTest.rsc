@@ -7,9 +7,7 @@ import List;
 import String;
 import IO;
 import metrics::java::LOC;
-import metrics::java::UnitSize;
 import metrics::java::CyclomaticComplexity;
-import metrics::Constants;
 import Maintenance;
 import Domain;
 
@@ -60,3 +58,4 @@ test bool testShouldAnalyseInnerClasses() {
 }
 	
 test bool testShouldAnalyseMethodWithInnerClassCorrectly() = <<19,4,_*>, false,_> := analyseClass(getClass("MethodWithAnonymousClass"),v, true);
+
