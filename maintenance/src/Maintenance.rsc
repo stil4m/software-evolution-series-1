@@ -3,7 +3,6 @@ module Maintenance
 import lang::java::jdt::m3::Core;
 import metrics::java::CyclomaticComplexity;
 import metrics::java::UnitSize;
-import metrics::java::Duplications;
 import metrics::java::LOC;
 import metrics::Constants;
 import Domain;
@@ -38,13 +37,6 @@ public int getTotalLoc(ProjectAnalysis p) {
 public void doAnalysis(M3 m3Model) {
 	println("<printDateTime(now())> Start analysis");
 	ProjectAnalysis p =  analyseProject(m3Model);
-	
-	println("<printDateTime(now())> Did analysis. Find some duplications!!!");
-	
-	set[LineRefs] duplications = computeDuplications(p);
-	println("Duplication size: <size(duplications)>");
-	
-	iprintln(aggregateDuplications(duplications));
 }
 
 public ProjectAnalysis analyseProject(M3 model) {

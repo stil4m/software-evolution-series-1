@@ -1,6 +1,6 @@
-module metrics::java::Duplications
+module profiling::DuplicationDetection
 
- 
+
 import Domain;
 import IO;
 import List;
@@ -20,7 +20,7 @@ private int DUPLICATION_LENGTH = 6;
 public set[LineRefs] computeDuplications(ProjectAnalysis p) {
 	
 	LineDB db = ();
-	for(FileAnalysis f <- p) {
+	for(FileAnalysis f <- p.files) {
 		<_, _, lines, _> = f;
 		int index = 0;
 		for (<c,s> <- lines) {
