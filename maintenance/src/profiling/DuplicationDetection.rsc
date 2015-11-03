@@ -29,6 +29,19 @@ public set[LineRefs] computeDuplications(ProjectAnalysis project) {
 	return duplications;
 }
 
+public map[FileAnalysis,list[int]] aggregateDuplications(set[LineRefs] duplications) {
+	LineRefs s = union(duplications);
+	map[FileAnalysis,set[int]] aggregate = ();
+	for (<fileAnalysis, ln> <- s) {
+		if (aggregate[fileAnalysis]?) {
+			aggregate[fileAnalysis] += ln;
+		} else {
+			aggregate[fileAnalysis] = {ln};
+		}
+	}
+	return ( k: sort(toList(aggregate[k])) | k <- aggregate );
+}
+
 private LineDB filterByOccurences(int occurences, LineDB db) = (key : db[key] | key <- db, size(db[key]) >= occurences);
 
 private LineDB buildDb(ProjectAnalysis project) {
@@ -43,11 +56,11 @@ private LineDB buildDb(ProjectAnalysis project) {
 	return db;
 }
 
-public tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
+private tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
 	return computeDupTree(key, db[key], duplications, 1);
 }
 
-public tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs refs, set[LineRefs] duplications, int currentDepth) {
+private tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs refs, set[LineRefs] duplications, int currentDepth) {
 	bool deepEnough = currentDepth >= DUPLICATION_LENGTH;
 	
 	//Just return if we know the answer
@@ -98,59 +111,4 @@ private LineRefs withNextLine(LineRefs refs) = {<f,i> | <f,i> <- refs, fileAnaly
 
 private bool fileAnalysisHasLine(FileAnalysis f, int ln) {
 	return ln < size(f.lines);
-}
-
-public FileAnalysis fileAnalysis1 = fileAnalysis(6, [], [
-	effectiveLine(1, "A1"),
-	effectiveLine(2, "A2"),
-	effectiveLine(3, "A3"),
-	effectiveLine(4, "A4"),
-	effectiveLine(5, "A5"),
-	effectiveLine(6, "A6")
-], |file://foo1|);
-
-public FileAnalysis fileAnalysis2 = fileAnalysis(9,[], [
-	effectiveLine(1, "A1"),
-	effectiveLine(2, "A2"),
-	effectiveLine(3, "A3"),
-	effectiveLine(4, "A4"),
-	effectiveLine(5, "A5"),
-	effectiveLine(6, "A6")
-], |file://foo2|);
-
-public FileAnalysis fileAnalysis3 = fileAnalysis(5,[], [
-	effectiveLine(1, "A1"),
-	effectiveLine(2, "A2"),
-	effectiveLine(3, "B3"),
-	effectiveLine(4, "B4"),
-	effectiveLine(5, "B5")
-], |file://foo3|);
-
-public FileAnalysis fileAnalysis4 = fileAnalysis(5,[], [
-	effectiveLine(1, "A1"),
-	effectiveLine(2, "A2"),
-	effectiveLine(3, "B3"),
-	effectiveLine(4, "B4"),
-	effectiveLine(5, "B5")
-], |file://foo4|);
-
-test bool testDuplicationCalculation() {
-	output = computeDuplications([fileAnalysis1,fileAnalysis2,fileAnalysis3,fileAnalysis4]);
-	return aggregateDuplications(output) == (
-	  |file://foo1|:[0,1,2,3,4,5],
-	  |file://foo2|:[0,1,2,3,4,5]
-	);
-}
-
-public map[FileAnalysis,list[int]] aggregateDuplications(set[LineRefs] duplications) {
-	LineRefs s = union(duplications);
-	map[FileAnalysis,set[int]] aggregate = ();
-	for (<fileAnalysis, ln> <- s) {
-		if (aggregate[fileAnalysis]?) {
-			aggregate[fileAnalysis] += ln;
-		} else {
-			aggregate[fileAnalysis] = {ln};
-		}
-	}
-	return ( k: sort(toList(aggregate[k])) | k <- aggregate );
 }
