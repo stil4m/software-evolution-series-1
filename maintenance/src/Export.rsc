@@ -1,6 +1,5 @@
 module Export
 
-
 import Domain;
 import IO;
 import lang::json::IO;

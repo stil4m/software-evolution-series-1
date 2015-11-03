@@ -1,4 +1,4 @@
-module metrics::java::CyclomaticComplexity
+module metrics::java::Complexity
 
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
@@ -9,12 +9,12 @@ import Type;
 import String;
 import Node;
 
-public int calculateComplexityForMethod(loc m, M3 model) {
-	return 0;
+public int methodComplexity(loc m, M3 model) {
 	Declaration t = getMethodASTEclipse(m, model=model);
 	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
 		return complexityOfStatement(impl);
 	}
+	
 	return 0;
 }
 

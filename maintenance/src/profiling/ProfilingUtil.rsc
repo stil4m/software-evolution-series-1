@@ -22,6 +22,6 @@ private map[str,value] riskProfileToMap(RiskProfile riskProfile) {
 }
 
 private str stringListKey(low()) = "low";
-private str stringListKey(low()) = "moderate";
-private str stringListKey(low()) = "high";
-private str stringListKey(low()) = "very_high";
+private str stringListKey(moderate()) = "moderate";
+private str stringListKey(high()) = "high";
+private str stringListKey(veryHigh()) = "very_high";

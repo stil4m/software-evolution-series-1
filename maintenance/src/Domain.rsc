@@ -2,7 +2,7 @@ module Domain
 
 alias RiskProfile = map[Risk, int];
 
-alias ProfileData = map[str,value];
+alias ProfileData = map[str, value];
 
 data Profile = plusPlus(ProfileData) 
 			| plus(ProfileData) 

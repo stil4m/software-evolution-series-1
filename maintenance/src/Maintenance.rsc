@@ -1,28 +1,27 @@
 module Maintenance
 
+import DateTime;
+import IO;
+import List;
+import String;
+
 import lang::java::jdt::m3::Core;
-import metrics::java::CyclomaticComplexity;
+
+import metrics::java::Complexity;
 import metrics::java::LOC;
+import profiling::Profiler;
 import Domain;
 import Export;
-import profiling::Profiler;
-
-import List;
-import Type;
-import Set;
-import IO;
-import String;
-import DateTime;
 
 public loc exportPath = |project://maintenance/export.json|;
 
 public value mainFunction() {
 	datetime modelStart = now();
-	println("<printDateTime(modelStart)> Obtain M3 Model");
+	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
+	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
@@ -70,7 +69,8 @@ public FileAnalysis analyseFile(loc cu, M3 model) {
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner) {
 	list[MethodAnalysis] methods = [analyseMethod(method, model) | method <- methods(model,cl)];
 	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
+	
 	return result + [*analyseClass(nestedClass, model, true) | nestedClass <- nestedClasses(model,cl)];
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model) = methodAnalysis(relevantLineCount(m), calculateComplexityForMethod(m, model), m);
+public MethodAnalysis analyseMethod(loc m, M3 model) = methodAnalysis(relevantLineCount(m), methodComplexity(m, model), m);
