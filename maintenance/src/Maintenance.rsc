@@ -19,8 +19,8 @@ public loc exportPath = |project://maintenance/export.json|;
 public value mainFunction() {
 	println("<printDateTime(now())> Obtain M3 Model");
 	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
-	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	m3Model = createM3FromEclipseProject(|project://hsqldb|);
+	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	doAnalysis(m3Model);
 	return "OK";
 }
@@ -35,6 +35,7 @@ public void doAnalysis(M3 m3Model) {
 	println("<printDateTime(now())> Export to file");
 	
 	exportToFile(p, projectProfile, exportPath);
+	println("<printDateTime(now())> Done");
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
