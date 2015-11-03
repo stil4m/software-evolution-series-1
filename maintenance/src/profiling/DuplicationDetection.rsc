@@ -21,9 +21,8 @@ public set[LineRefs] computeDuplications(ProjectAnalysis p) {
 	
 	LineDB db = ();
 	for(FileAnalysis f <- p.files) {
-		<_, _, lines, _> = f;
 		int index = 0;
-		for (<c,s> <- lines) {
+		for (<c,s> <- f.lines) {
 			db = assocMap(db,s,<f,index>);
 			index += 1;
 		}
@@ -55,8 +54,7 @@ public tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs ref
 	
 	map[str,LineRefs] x = ();
 	for (<f,c> <- withNextLine(refs)) {
-		<_, _, lines, _> = f;
-		<n,nextKey> = lines[c+1];
+		<n,nextKey> = f.lines[c+1];
 		x = assocMap(x,nextKey,<f,c+1>);
 	}
 	
@@ -96,43 +94,42 @@ private set[str] infoLineRefs(LineRefs l) {
 private LineRefs withNextLine(LineRefs refs) = {<f,i> | <f,i> <- refs, fileAnalysisHasLine(f, i+1)};
 
 private bool fileAnalysisHasLine(FileAnalysis f, int ln) {
-	<_, _, lines, _> = f;
-	return ln < size(lines);
+	return ln < size(f.lines);
 }
 
-public FileAnalysis fileAnalysis1 = <6,[], [
+public FileAnalysis fileAnalysis1 = fileAnalysis(6, [], [
 	<1, "A1">,
 	<2, "A2">,
 	<3, "A3">,
 	<4, "A4">,
 	<5, "A5">,
 	<6, "A6">
-], |file://foo1|>;
+], |file://foo1|);
 
-public FileAnalysis fileAnalysis2 = <9,[], [
+public FileAnalysis fileAnalysis2 = fileAnalysis(9,[], [
 	<1, "A1">,
 	<2, "A2">,
 	<3, "A3">,
 	<4, "A4">,
 	<5, "A5">,
 	<6, "A6">
-], |file://foo2|>;
+], |file://foo2|);
 
-public FileAnalysis fileAnalysis3 = <5,[], [
+public FileAnalysis fileAnalysis3 = fileAnalysis(5,[], [
 	<1, "A1">,
 	<2, "A2">,
 	<3, "B3">,
 	<4, "B4">,
 	<5, "B5">
-], |file://foo3|>;
+], |file://foo3|);
 
-public FileAnalysis fileAnalysis4 = <5,[], [
+public FileAnalysis fileAnalysis4 = fileAnalysis(5,[], [
 	<1, "A1">,
 	<2, "A2">,
 	<3, "B3">,
 	<4, "B4">,
 	<5, "B5">
-], |file://foo4|>;
+], |file://foo4|);
 
 test bool testDuplicationCalculation() {
 	output = computeDuplications([fileAnalysis1,fileAnalysis2,fileAnalysis3,fileAnalysis4]);

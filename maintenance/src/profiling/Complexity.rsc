@@ -5,7 +5,7 @@ import profiling::ProfilingUtil;
 
 public Profile profileComplexity(ProjectAnalysis project) {
 	RiskProfile riskProfile = ();
-	for(file <- project.files, class <- file.classes, method <- class.methods) {
+	for (file <- project.files, class <- file.classes, method <- class.methods) {
 		riskProfile[getCCRisk(method.cc)] ? 0 += method.LOC;
 	}
 	

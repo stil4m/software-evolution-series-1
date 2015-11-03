@@ -51,11 +51,11 @@ test bool testCyclometicComplexity3() = getCyclomaticComplexity("ComplexMethod",
 test bool testShouldAnalyseInnerClasses() {
 	return 
 	[
-	  <[],false,|java+class:///nl/mse/complexity/InnerClass|>,
-	  <[<9,2,|java+method:///nl/mse/complexity/InnerClass/Inner1/clone()|>],true,|java+class:///nl/mse/complexity/InnerClass/Inner1|>,
-	  <[<9,6,|java+method:///nl/mse/complexity/InnerClass/Inner2/clone()|>],true,|java+class:///nl/mse/complexity/InnerClass/Inner2|>
+	  classAnalysis([],false,|java+class:///nl/mse/complexity/InnerClass|),
+	  classAnalysis([methodAnalysis(9,2,|java+method:///nl/mse/complexity/InnerClass/Inner1/clone()|)],true,|java+class:///nl/mse/complexity/InnerClass/Inner1|),
+	  classAnalysis([methodAnalysis(9,6,|java+method:///nl/mse/complexity/InnerClass/Inner2/clone()|)],true,|java+class:///nl/mse/complexity/InnerClass/Inner2|)
 	] == analyseClass(getClass("InnerClass"),v, false);
 }
 	
-test bool testShouldAnalyseMethodWithInnerClassCorrectly() = <<19,4,_*>, false,_> := analyseClass(getClass("MethodWithAnonymousClass"),v, true);
+test bool testShouldAnalyseMethodWithInnerClassCorrectly() = [classAnalysis([methodAnalysis(19,4,_)], false,_)] := analyseClass(getClass("MethodWithAnonymousClass"),v, true);
 

@@ -44,29 +44,29 @@ public ProjectAnalysis analyseProject(M3 model) {
 	println("<printDateTime(now())> Compilation unit size: <size(compilationUnits)>");
 	list[FileAnalysis] files = [analyseFile(c, model) | c <- compilationUnits];
 	int totalLoc = (0 | it + file.LOC | file <- files);
-	return <totalLoc, files>;
+	return projectAnalysis(totalLoc, files);
 }
 
 public FileAnalysis analyseFile(loc cu, M3 model) {
-	lrel[int,str] lines = [ <c,trim(s)> | <c,s> <- relevantLines(cu)];
+	lrel[int,str] lines = [<c,trim(s)> | <c,s> <- relevantLines(cu)];
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false) | class <- classes];
 	
-	return <size(lines), classAnalysisses, lines, cu>;
+	return fileAnalysis(size(lines), classAnalysisses, lines, cu);
 }
 
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner) {
 	list[MethodAnalysis] methods = [analyseMethod(method, model) | method <- methods(model,cl)];
 	
-	list[ClassAnalysis] result = [<methods, inner, cl>];
+	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
 	result += [*analyseClass(nestedClass, model, true) | nestedClass <- nestedClasses(model,cl)];
 	
 	return result;
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model) = <
+public MethodAnalysis analyseMethod(loc m, M3 model) = methodAnalysis(
 	relevantLineCount(m), // TODO improve this. 
 	calculateComplexityForMethod(m, model), 
 	m
->;
+);

@@ -7,10 +7,12 @@ import lang::json::IO;
 import List;
 
 public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l) {
-	writeFile(l, toJSON((
+	value json = (
 		"project" : projectAsMap(p),
 		"profile" : (k : profileToInt(profile[k]) | k <- profile)
-	), true));
+	);
+	iprintln(json);
+	writeFile(l, toJSON(json, true));
 }
 
 public int profileToInt(Profile p) {
@@ -28,11 +30,10 @@ public map[str,value] projectAsMap(ProjectAnalysis p) {
 }
 
 private map[str,value] fileAsMap(FileAnalysis f) {
-	<lineCount, classAnalysisses, lines, location> = f;
 	return (
-		"location" : "<location.path>",
-		"lineCount" : "<lineCount>",
-		"classes" : [classAsMap(c) | c<- classAnalysisses]
+		"location" : "<f.location.path>",
+		"lineCount" : "<f.LOC>",
+		"classes" : [classAsMap(c) | c <- f.classes]
 	);
 }
 
@@ -45,10 +46,9 @@ private value classAsMap(ClassAnalysis classAnalysis) {
 }
 
 private value methodAsMap(MethodAnalysis methodAnalysis) {
-	<methodSize,cc,location> = methodAnalysis;
 	return (
-		"size" : methodSize,
-		"complexity" : cc,
-		"location" : location.file
+		"size" : methodAnalysis.LOC,
+		"complexity" : methodAnalysis.cc,
+		"location" : methodAnalysis.location.path
 	);
 }
