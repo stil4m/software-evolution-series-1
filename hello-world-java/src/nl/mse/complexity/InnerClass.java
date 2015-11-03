@@ -33,3 +33,7 @@ public class InnerClass {
 	}
 
 }
+
+class Class2 {
+	
+}

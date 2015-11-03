@@ -21,8 +21,8 @@ public loc exportPath = |project://maintenance/export.json|;
 public value mainFunction() {
 	println("<printDateTime(now())> Obtain M3 Model");
 	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
-	m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
+	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	doAnalysis(m3Model);
 	return "OK";
 }
@@ -61,21 +61,16 @@ public FileAnalysis analyseFile(loc cu, M3 model) {
 	lrel[int,str] lines = [ <c,trim(s)> | <c,s> <- relevantLines(cu)];
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
-	list[ClassAnalysis] classAnalysisses = [analyseClass(class, model) | class <- classes];
+	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false) | class <- classes];
 	
 	return <size(lines), classAnalysisses, lines, cu>;
 }
 
-public ClassAnalysis analyseClass(loc cl, M3 model) {
-	list[MethodAnalysis] result = [];
+public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner) {
+	list[MethodAnalysis] methods = [analyseMethod(method, model) | method <- methods(model,cl)];
 	
-	for(method <- methods(model,cl)) {
-		result += analyseMethod(method, model);	
-	}
-	
-	for(subcl <- nestedClasses(model, cl)) {
-		result += analyseClass(subcl,model);
-	}
+	list[ClassAnalysis] result = [<methods, inner, cl>];
+	result += [*analyseClass(nestedClass, model, true) | nestedClass <- nestedClasses(model,cl)];
 	
 	return result;
 }

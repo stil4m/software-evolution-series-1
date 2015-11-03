@@ -44,13 +44,19 @@ test bool testFileLineCount8() = getRelevantLines("SimplePojo.java") == 5;
 test bool testFileLineCount9() = getRelevantLines("WithMethod.java") == 6;
 test bool testFileLineCount10() = getRelevantLines("A4.java") == 9;
 
-
 public int getCyclomaticComplexity(str className, str methodName) = calculateComplexityForMethod(getMethod(className,methodName),v);
 
 test bool testCyclometicComplexity1() = getCyclomaticComplexity("DoWhileStatement", "doSomething") == 2;
 test bool testCyclometicComplexity2() = getCyclomaticComplexity("Ternary", "ternaryFoo") == 3 ;
 test bool testCyclometicComplexity3() = getCyclomaticComplexity("ComplexMethod", "foo") == 6 ;
 
-
-test bool testShouldAnalyseInnerClasses() = [<9,2,_*>,<9,6,_*>] := analyseClass(getClass("InnerClass"),v);
-test bool testShouldAnalyseMethodWithInnerClassCorrectly() = [<19,4,_*>] := analyseClass(getClass("MethodWithAnonymousClass"),v);
+test bool testShouldAnalyseInnerClasses() {
+	return 
+	[
+	  <[],false,|java+class:///nl/mse/complexity/InnerClass|>,
+	  <[<9,2,|java+method:///nl/mse/complexity/InnerClass/Inner1/clone()|>],true,|java+class:///nl/mse/complexity/InnerClass/Inner1|>,
+	  <[<9,6,|java+method:///nl/mse/complexity/InnerClass/Inner2/clone()|>],true,|java+class:///nl/mse/complexity/InnerClass/Inner2|>
+	] == analyseClass(getClass("InnerClass"),v, false);
+}
+	
+test bool testShouldAnalyseMethodWithInnerClassCorrectly() = <<19,4,_*>, false,_> := analyseClass(getClass("MethodWithAnonymousClass"),v, true);
