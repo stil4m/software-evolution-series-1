@@ -6,9 +6,13 @@ import IO;
 import List;
 import DateTime;
 import Map;
+import Set;
+import Type;
 
-alias LineRefs = lrel[FileAnalysis, int];
+alias LineRef = tuple[FileAnalysis, int];
+alias LineRefs = set[LineRef];
 alias LineDB = map[str,LineRefs];
+//alias Duplications = set[LineRefs];
 
 data DupTree = Node(str key, LineRefs refs, list[DupTree] children, int knownDepth); 
 
@@ -20,79 +24,107 @@ public void computeDuplications(ProjectAnalysis p) {
 	for(FileAnalysis f <- p) {
 		<_, _, lines, _> = f;
 		int index = 0;
-		int max = size(lines) - (DUPLICATION_LENGTH - 1);
-			
 		for (<c,s> <- lines) {
 			db = assocMap(db,s,<f,index>);
 			index += 1;
-			if (index == max) {
-				break;
-			}
 		}
 	}
 	
 	db = (k : db[k] | k <- db, size(db[k]) >= 2);
 	int dbSize = size(db);
 	int keyIndex = 0;
-	map[str,int] depthDb = ();
+	set[LineRefs] duplications = {};
 	for ( k <- db) {
 		keyIndex += 1;
 		println("<printDateTime(now())> Analyze key <keyIndex>/<dbSize>");  
-		int depth = analyzeKey(k, db, depthDb);
-		depthDb[k] = depth;
+		<depth, newDuplications> = analyzeKey(k, db, duplications);
+		duplications = newDuplications;
 	}
-	
-	depthDb = ( k : depthDb[k] | k <- depthDb, depthDb[k] >= DUPLICATION_LENGTH);
-}
-
-public int analyzeKey(str key, LineDB db, map[str,int] depthDb) {
-	DupTree t = computeDupTree(key, db[key], db, depthDb);
-	println("<printDateTime(now())> Duplicate Line: <key>");
-	int depth = depthForTree(t);
-	return depth;
-}
-
-public int depthForTree(DupTree t) {
-	if ( Node(_,_,children, known) := t) {
-		if (known == -1) {
-			return 1 + max(0 + [depthForTree(s) | s <- children]);
-		} else {
-			return known;
+	for (d <- duplications) {
+		println("Found duplication");
+		for(<fs, ln> <- d) {
+			<LOC,classes,lines,location> = fs;
+			println("\>\> <ln> - <location.file> `<lines[ln]>` <size(lines)>");
+			//iprintln(lines);
 		}
-	} else {
-		return 1;
-	}	
+		//iprintln(d);
+		//return;
+	}
 }
 
-public DupTree computeDupTree(str key, LineRefs refs, LineDB db, map[str,int] depthDb) {
-	map[str,lrel[FileAnalysis,int]] x = ();
-	
-	if (depthDb[key]? && refs == db[key]) {
-		return Node(key, refs, [], depthDb[key]);  
+public tuple[bool,set[LineRefs]] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
+	<result, t> = computeDupTree(key, db[key], db, duplications, 1);
+	if (result) {
+		println("<printDateTime(now())> Duplicate Line: <key>");
 	}
+	return <result, t>;
+}
+
+public tuple[bool, set[LineRefs]] computeDupTree(str key, LineRefs refs, LineDB db, set[LineRefs] duplications, int currentDepth) {
+	bool deepEnough = currentDepth >= DUPLICATION_LENGTH;
+	
+	//Just return if we know the answer
+	if (refs in duplications) {
+		return <true, duplications>;
+	}
+	
+	map[str,LineRefs] x = ();
 	for (<f,c> <- withNextLine(refs)) {
 		<_, _, lines, _> = f;
 		<n,nextKey> = lines[c+1];
+		println("`<lines[c]>` -\> `<lines[c+1]>`");
+		//println(refs);
 		x = assocMap(x,nextKey,<f,c+1>);
 	}
-	children = for (y <- x) {
-		if (size(x[y]) > 1) {
-			append computeDupTree(y, x[y], db, depthDb);
+	
+	set[LineRefs] childrenSets;
+	childrenSets = for (y <- x, size(x[y]) > 1) {
+		<subDeepEnough, duplications> = computeDupTree(y, x[y], db, duplications, currentDepth+1);
+		if (subDeepEnough) {
+			//append { <fs,n-1> | <fs,n> <- x[y]};
+			append x[y];
 		}
 	}
-	return Node(key, refs, children, -1);
+	
+	if (deepEnough) {
+		duplications += {refs};
+		return <true, duplications>;
+	} else if (!isEmpty(childrenSets)) {
+		set[LineRefs] chil = { c | c <- childrenSets};
+		
+		//LineRefs r = ;
+		result = union(chil);
+		println(size(result));
+		if (size(result) == 4) {
+		println("");
+		println("");
+		println("");
+			iprintln(chil);
+		println("");
+		println("");
+		println("");
+			iprintln(result);
+			println("");
+			println("");
+			println("");
+		}
+		duplications += chil; 
+		return <size(childrenSets) != 0, duplications>;
+	} else {
+		return <false, duplications>;
+	}
 }
 
-private map[&T,list[&S]] assocMap(map[&T,list[&S]] m, &T t, &S s) {
+private map[&T,set[&S]] assocMap(map[&T,set[&S]] m, &T t, &S s) {
 	if (m[t]?) {
 		return m[t] += s;
 	} else {
-		m[t] = [s];
+		m[t] = {s};
 		return m;
 	}
 }
 
-private LineRefs withNextLine(LineRefs refs) = [<f,i> | <f,i> <- refs, fileAnalysisHasLine(f, i+1)];
+private LineRefs withNextLine(LineRefs refs) = {<f,i> | <f,i> <- refs, fileAnalysisHasLine(f, i+1)};
 
 private bool fileAnalysisHasLine(FileAnalysis f, int ln) {
 	<_, _, lines, _> = f;

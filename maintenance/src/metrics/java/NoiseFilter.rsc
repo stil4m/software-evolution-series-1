@@ -7,7 +7,7 @@ alias InludeResult = tuple[bool,bool];
 
 public lrel[int,str] filterLines(list[str] input) {
 	bool inComment = false;
-	int i = 0;
+	int i = 1;
 	return for (line <- input) {
 		<res,inComment> = includeLine(line, inComment);
 		if (res) {

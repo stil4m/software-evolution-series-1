@@ -10,6 +10,6 @@ alias MethodAnalysis = tuple[int size,int cc, loc location];
 
 alias ClassAnalysis = list[MethodAnalysis];
 
-alias FileAnalysis = tuple[int, list[ClassAnalysis], lrel[int,str], loc];
+alias FileAnalysis = tuple[int LOC, list[ClassAnalysis] classes, lrel[int,str] lines, loc location];
 
 alias ProjectAnalysis = list[FileAnalysis];
