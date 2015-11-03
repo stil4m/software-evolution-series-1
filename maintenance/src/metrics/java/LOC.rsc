@@ -13,21 +13,6 @@ import String;
 //2) Sloccount has a bug that it will yield a lower line count when analyzing the root folder
 //   instead of the src/org folder. When sloccount is executed with `.` it yields `164950`. for the src/org folder
 //   When it is executed with `src/org` it yields `168212`
- 
-public void runLOC() {
-	v = createM3FromEclipseProject(|project://hsqldb|);
-	println("Number of lines: <calculateLOC(v)>");
-}
-
-public int calculateLOC(M3 v) {
-	rel[loc,loc] containments = v@containment;
-	set[loc] compilationUnits = {s | <s,_> <- containments, s.scheme == "java+compilationUnit"};
-	
-	lrel[int,loc] result = sort([<relevantLineCount(s), s> | s <- compilationUnits]);
-	return sum([0] + [s | <s,l> <- result]);
-}
-
-
 public int relevantLineCount(loc l) {
 	int res = size(relevantLines(l));
 	return res;

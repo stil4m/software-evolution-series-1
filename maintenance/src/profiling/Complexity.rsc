@@ -13,13 +13,8 @@ public Profile profileComplexity(ProjectAnalysis project) {
 }
 
 private Risk getCCRisk(int unitSize) {
-	if (unitSize <= 10) {
-	 	return low();
-	} else if (unitSize <= 20) {
-		return moderate();
-	} else if (unitSize <= 50) { 
-		return high();	
-	} else {
-		return veryHigh();
-	}
+	if (unitSize <= 10) return low();
+	if (unitSize <= 20) return moderate();
+	if (unitSize <= 50) return high();	
+	return veryHigh();
 }

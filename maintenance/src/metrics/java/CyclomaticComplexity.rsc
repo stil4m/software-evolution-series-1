@@ -9,24 +9,6 @@ import Type;
 import String;
 import Node;
 
-// http://gmetrics.sourceforge.net/gmetrics-CyclomaticComplexityMetric.html
-public void runCC() {
-	v =  createM3FromEclipseProject(|project://hello-world-java|);
-	calculateCyclomaticComplexity(v);
-}
-
-public void calculateCyclomaticComplexity(M3 v) {
-	set[loc] cs = classes(v);
-	
-	for(c <- cs) {
-		println(c.path);
-		ms = methods(v, c);
-		for(m <- ms) {
-			println(calculateComplexityForMethod(m, v));
-		}
-	}
-}
-
 public int calculateComplexityForMethod(loc m, M3 model) {
 	return 0;
 	Declaration t = getMethodASTEclipse(m, model=model);
@@ -36,7 +18,7 @@ public int calculateComplexityForMethod(loc m, M3 model) {
 	return 0;
 }
 
-
+// http://gmetrics.sourceforge.net/gmetrics-CyclomaticComplexityMetric.html
 private int complexityOfStatement(Statement statement) {
 	int i = 1;
 	visit (statement) {

@@ -21,11 +21,11 @@ public value mainFunction() {
 	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	m3Model = createM3FromEclipseProject(|project://hsqldb|);
 	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
-	doAnalysis(m3Model);
+	sonar(m3Model);
 	return "OK";
 }
 
-public void doAnalysis(M3 m3Model) {
+public void sonar(M3 m3Model) {
 	println("<printDateTime(now())> Start analysis");
 	ProjectAnalysis p = analyseProject(m3Model);
 	
@@ -39,10 +39,7 @@ public void doAnalysis(M3 m3Model) {
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
-	set[loc] compilationUnits = { x| <x,_> <- model@containment, isCompilationUnit(x)
-		//, /src\/org\/hsqldb\/[A-Z]/ := x.path //Will decrease the unit size to around 20%
-	};
-	println("<printDateTime(now())> Compilation unit size: <size(compilationUnits)>");
+	set[loc] compilationUnits = { x| <x,_> <- model@containment, isCompilationUnit(x)};
 	list[FileAnalysis] files = [analyseFile(c, model) | c <- compilationUnits];
 	int totalLoc = (0 | it + file.LOC | file <- files);
 	return projectAnalysis(totalLoc, files);
@@ -59,15 +56,8 @@ public FileAnalysis analyseFile(loc cu, M3 model) {
 
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner) {
 	list[MethodAnalysis] methods = [analyseMethod(method, model) | method <- methods(model,cl)];
-	
 	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
-	result += [*analyseClass(nestedClass, model, true) | nestedClass <- nestedClasses(model,cl)];
-	
-	return result;
+	return result + [*analyseClass(nestedClass, model, true) | nestedClass <- nestedClasses(model,cl)];
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model) = methodAnalysis(
-	relevantLineCount(m), // TODO improve this. 
-	calculateComplexityForMethod(m, model), 
-	m
-);
+public MethodAnalysis analyseMethod(loc m, M3 model) = methodAnalysis(relevantLineCount(m), calculateComplexityForMethod(m, model), m);
