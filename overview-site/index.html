@@ -23,19 +23,19 @@
                 </div>
             </div>
         </nav>
-        <div class="well">
-            <form ng-submit="lookupFile()" class="form-inline">
-                <div class="form-group">
-                    <!--<label for="target-file">Target File</label>-->
-                    <input type="file" fileread="lookupFile(data)"/>
-                    <!--<input id="target-file" class="form-control" type="file" ng-model="targetFile">-->
-                </div>
-                <button type="submit" class="btn btn-default">Load</button>
-            </form>
-            <div ng-if="error" class="target-file-error">
-                <p ng-bind="error"></p>
-            </div>
-        </div>
+        <!--<div class="well">-->
+            <!--<form ng-submit="lookupFile()" class="form-inline">-->
+                <!--<div class="form-group">-->
+                    <!--&lt;!&ndash;<label for="target-file">Target File</label>&ndash;&gt;-->
+                    <!--<input type="file" fileread="lookupFile(data)"/>-->
+                    <!--&lt;!&ndash;<input id="target-file" class="form-control" type="file" ng-model="targetFile">&ndash;&gt;-->
+                <!--</div>-->
+                <!--<button type="submit" class="btn btn-default">Load</button>-->
+            <!--</form>-->
+            <!--<div ng-if="error" class="target-file-error">-->
+                <!--<p ng-bind="error"></p>-->
+            <!--</div>-->
+        <!--</div>-->
         <div ng-controller="OverviewCtrl">
             <ul class="nav nav-tabs" style="margin-bottom: 20px;">
                 <li ng-repeat="tab in tabs" ng-class="activeTab == tab && 'active'">

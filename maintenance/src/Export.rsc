@@ -14,13 +14,17 @@ public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l) {
 	writeFile(l, toJSON(json, true));
 }
 
-public int profileToInt(Profile p) {
-	if (p == plusPlus()) return 5;
-	if (p == plus()) return 4;
-	if (p == neutral()) return 3;
-	if (p == minus()) return 2;
-	return 1;
+private map[str,value] profileToInt(plusPlus(d)) = profileValue(5,d);
+private map[str,value] profileToInt(plus(d)) = profileValue(4,d);
+private map[str,value] profileToInt(neutral(d)) = profileValue(3,d);
+private map[str,value] profileToInt(minus(d)) = profileValue(2,d);
+private map[str,value] profileToInt(minusMinus(d)) = profileValue(1,d);
+
+private map[str,value] profileValue(int risk, ProfileData d) {
+	d["rating"] = risk;
+	return d;
 }
+
 public map[str,value] projectAsMap(ProjectAnalysis p) {
 	return (
 		"loc" : p.LOC,

@@ -1,7 +1,4 @@
 <div ng-controller="ProfileCtrl as ctrl">
-    <h1>TODO: Overview</h1>
-
-
     <table class="maintainability-table">
         <tr>
             <td class="empty"></td>
@@ -13,11 +10,77 @@
             <td class="component">{{row.name}}</td>
             <td ng-repeat="column in ctrl.columns" class="content">
                 <span ng-if="row.columns.indexOf(column.id) >= 0">
-                    {{analysis.profile[column.id] | risk }}
+                    {{analysis.profile[column.id].rating | risk }}
                 </span>
             </td>
             <td class="average content">{{ctrl.getAverage(row) | risk}}</td>
         </tr>
 
     </table>
+
+    <section class="maintainability-concept">
+        <h4>Volume</h4>
+
+        The volume of the program is
+        <strong>{{analysis.profile.volume.size}}</strong>
+    </section>
+
+    <section class="maintainability-concept">
+        <h4>Complexity per Unit</h4>
+
+        <table class="table">
+            <tr>
+                <td>Low</td>
+                <td>{{analysis.profile.complexity_per_unit.low || 0}} Lines</td>
+            </tr>
+            <tr>
+                <td>Moderate</td>
+                <td>{{analysis.profile.complexity_per_unit.moderate || 0}} Lines</td>
+            </tr>
+            <tr>
+                <td>High</td>
+                <td>{{analysis.profile.complexity_per_unit.high || 0}} Lines</td>
+            </tr>
+            <tr>
+                <td>Very High</td>
+                <td>{{analysis.profile.complexity_per_unit.very_high || 0}} Lines</td>
+            </tr>
+        </table>
+    </section>
+
+    <section class="maintainability-concept">
+        <h4>Duplication</h4>
+
+        <p>
+            Number of duplicate lines:
+            <strong>{{analysis.profile.duplication.count}}</strong>
+        </p>
+        <p>
+            Number of files containing duplicates:
+            <strong>{{analysis.profile.duplication.files}}</strong>
+        </p>
+    </section>
+
+    <section class="maintainability-concept">
+        <h4>Size per Unit</h4>
+
+        <table class="table">
+            <tr>
+                <td>Low</td>
+                <td>{{analysis.profile.size_per_unit.low || 0}} Lines</td>
+            </tr>
+            <tr>
+                <td>Moderate</td>
+                <td>{{analysis.profile.size_per_unit.moderate || 0}} Lines</td>
+            </tr>
+            <tr>
+                <td>High</td>
+                <td>{{analysis.profile.size_per_unit.high || 0}} Lines</td>
+            </tr>
+            <tr>
+                <td>Very High</td>
+                <td>{{analysis.profile.size_per_unit.very_high || 0}} Lines</td>
+            </tr>
+        </table>
+    </section>
 </div>

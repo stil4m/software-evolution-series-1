@@ -2,7 +2,13 @@ module Domain
 
 alias RiskProfile = map[Risk, int];
 
-data Profile = plusPlus() | plus() | neutral() | minus() | minusMinus();
+alias ProfileData = map[str,value];
+
+data Profile = plusPlus(ProfileData) 
+			| plus(ProfileData) 
+			| neutral(ProfileData) 
+			| minus(ProfileData) 
+			| minusMinus(ProfileData);
 
 data Risk = low() | moderate() | high() | veryHigh();
 

@@ -48,7 +48,9 @@ angular
 
     self.getAverage = function (row) {
       var results = row.columns.map(function (id) {
-        return $scope.analysis.profile[id];
+        if ($scope.analysis.profile[id]) {
+          return $scope.analysis.profile[id].rating;
+        }
       }).filter(function (i) {
         return i != null;
       });

@@ -16,6 +16,9 @@
   text-align: center;
 }
 
+section.maintainability-concept {
+  margin-top: 30px;
+}
 .average {
   background: #ddd;
   font-weight: bold;
