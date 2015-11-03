@@ -40,7 +40,7 @@ public void sonar(M3 m3Model) {
 	map[str,Profile] projectProfile = profile(p);
 	iprintln(projectProfile);
 	
-	Duration d = now() - begin; 
+	Duration d = now() - analysisStart; 
 	println("Analysis and profiling took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
 	
 	println("<printDateTime(now())> Export to file");
