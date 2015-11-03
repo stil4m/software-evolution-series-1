@@ -52,7 +52,9 @@ public ProjectAnalysis analyseProject(M3 model) {
 		//, /src\/org\/hsqldb\/[A-Z]/ := x.path //Will decrease the unit size to around 20%
 	};
 	println("<printDateTime(now())> Compilation unit size: <size(compilationUnits)>");
-	return [analyseFile(c, model) | c <- compilationUnits];
+	list[FileAnalysis] files = [analyseFile(c, model) | c <- compilationUnits];
+	int totalLoc = (0 | it + file.LOC | file <- files);
+	return <totalLoc, files>;
 }
 
 public FileAnalysis analyseFile(loc cu, M3 model) {
