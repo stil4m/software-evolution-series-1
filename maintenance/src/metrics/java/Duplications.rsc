@@ -142,16 +142,15 @@ test bool testDuplicationCalculation() {
 	);
 }
 
-public map[loc,list[int]] aggregateDuplications(set[LineRefs] duplications) {
+public map[FileAnalysis,list[int]] aggregateDuplications(set[LineRefs] duplications) {
 	LineRefs s = union(duplications);
-	map[loc,set[int]] aggregate = ();
-	for (<<_, _, _, location>, ln> <- s) {
-		if (aggregate[location]?) {
-			aggregate[location] += ln;
+	map[FileAnalysis,set[int]] aggregate = ();
+	for (<fileAnalysis, ln> <- s) {
+		if (aggregate[fileAnalysis]?) {
+			aggregate[fileAnalysis] += ln;
 		} else {
-			aggregate[location] = {ln};
+			aggregate[fileAnalysis] = {ln};
 		}
 	}
-	map[loc,list[int]] r = ( k: sort(toList(aggregate[k])) | k <- aggregate );
-	return r;
+	return ( k: sort(toList(aggregate[k])) | k <- aggregate );
 }

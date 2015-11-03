@@ -44,7 +44,7 @@ public void doAnalysis(M3 m3Model) {
 	set[LineRefs] duplications = computeDuplications(p);
 	println("Duplication size: <size(duplications)>");
 	
-	println(aggregateDuplications(duplications));
+	iprintln(aggregateDuplications(duplications));
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
