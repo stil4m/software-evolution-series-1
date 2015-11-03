@@ -1,6 +1,7 @@
 module profiling::Duplications
 
-public value profileDuplication(ProjectAnalysis projectAnalysis)  {
-	println("HELLO");
-	return 1;
+import Domain;
+
+public Profile profileDuplication(ProjectAnalysis projectAnalysis)  {
+	return plusPlus();
 }
