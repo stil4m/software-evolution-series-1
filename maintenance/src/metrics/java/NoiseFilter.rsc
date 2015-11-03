@@ -1,19 +1,19 @@
 module metrics::java::NoiseFilter
 
-import IO;
 import String;
+import Domain;
 
 alias InludeResult = tuple[bool,bool];
 
-public lrel[int,str] filterLines(list[str] input) {
+public list[EffectiveLine] filterLines(list[str] input) {
 	bool inComment = false;
-	int i = 1;
+	int lineNumber = 1;
 	return for (line <- input) {
 		<res,inComment> = includeLine(line, inComment);
 		if (res) {
-			append <i,line>;
+			append effectiveLine(lineNumber, line);
 		}
-		i += 1;
+		lineNumber += 1;
 	}
 }
 

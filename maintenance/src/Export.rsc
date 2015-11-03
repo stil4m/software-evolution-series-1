@@ -11,7 +11,6 @@ public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l) {
 		"project" : projectAsMap(p),
 		"profile" : (k : profileToInt(profile[k]) | k <- profile)
 	);
-	iprintln(json);
 	writeFile(l, toJSON(json, true));
 }
 

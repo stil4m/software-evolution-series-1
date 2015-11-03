@@ -1,10 +1,9 @@
 module metrics::java::LOC
 
-import IO;
 import List;
-import lang::java::jdt::m3::Core;
 import metrics::java::NoiseFilter;
-import String;
+import Domain;
+import IO;
 
 //1) This file is not included in the createM3...:
 // ./integration/extAuthWithSpring/src/org/hsqldb/sample/SpringExtAuth.java
@@ -18,6 +17,6 @@ public int relevantLineCount(loc l) {
 	return res;
 }
 
-public lrel[int,str] relevantLines(loc l) {
+public list[EffectiveLine] relevantLines(loc l) {
 	return filterLines(readFileLines(l));
 }

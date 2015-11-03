@@ -19,8 +19,8 @@ public loc exportPath = |project://maintenance/export.json|;
 public value mainFunction() {
 	println("<printDateTime(now())> Obtain M3 Model");
 	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
-	m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
+	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	sonar(m3Model);
 	return "OK";
 }
@@ -46,7 +46,7 @@ public ProjectAnalysis analyseProject(M3 model) {
 }
 
 public FileAnalysis analyseFile(loc cu, M3 model) {
-	lrel[int,str] lines = [<c,trim(s)> | <c,s> <- relevantLines(cu)];
+	list[EffectiveLine] lines = [effectiveLine(l.number, trim(l.content)) | l <- relevantLines(cu)];
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false) | class <- classes];

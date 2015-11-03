@@ -2,6 +2,7 @@ module profiling::Profiler
 
 import Domain;
 import IO;
+import DateTime;
 
 import profiling::Complexity;
 import profiling::UnitSize;

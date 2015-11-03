@@ -17,27 +17,30 @@ data DupTree = Node(str key, LineRefs refs, list[DupTree] children, int knownDep
 
 private int DUPLICATION_LENGTH = 6;
 
-public set[LineRefs] computeDuplications(ProjectAnalysis p) {
-	
-	LineDB db = ();
-	for(FileAnalysis f <- p.files) {
-		int index = 0;
-		for (<c,s> <- f.lines) {
-			db = assocMap(db,s,<f,index>);
-			index += 1;
-		}
-	}
-	
-	db = (k : db[k] | k <- db, size(db[k]) >= 2);
-	int dbSize = size(db);
-	int keyIndex = 0;
+public set[LineRefs] computeDuplications(ProjectAnalysis project) {
+	LineDB db = buildDb(project);
+	db = filterByOccurences(2, db);
 	set[LineRefs] duplications = {};
-	for ( k <- db) {
-		keyIndex += 1;
-		<depth, newDuplications, _> = analyzeKey(k, db, duplications);
+	
+	for ( key <- db) {
+		<depth, newDuplications, _> = analyzeKey(key, db, duplications);
 		duplications = newDuplications;
 	}
 	return duplications;
+}
+
+private LineDB filterByOccurences(int occurences, LineDB db) = (key : db[key] | key <- db, size(db[key]) >= occurences);
+
+private LineDB buildDb(ProjectAnalysis project) {
+	LineDB db = ();
+	for(file <- project.files) {
+		int index = 0;
+		for (effectiveLine <- file.lines) {
+			db = assocMap(db,effectiveLine.content,<file,index>);
+			index += 1;
+		}
+	}
+	return db;
 }
 
 public tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
@@ -54,8 +57,8 @@ public tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs ref
 	
 	map[str,LineRefs] x = ();
 	for (<f,c> <- withNextLine(refs)) {
-		<n,nextKey> = f.lines[c+1];
-		x = assocMap(x,nextKey,<f,c+1>);
+		EffectiveLine line = f.lines[c+1];
+		x = assocMap(x,line.content,<f,c+1>);
 	}
 	
 	set[LineRefs] childrenSets;
@@ -98,37 +101,37 @@ private bool fileAnalysisHasLine(FileAnalysis f, int ln) {
 }
 
 public FileAnalysis fileAnalysis1 = fileAnalysis(6, [], [
-	<1, "A1">,
-	<2, "A2">,
-	<3, "A3">,
-	<4, "A4">,
-	<5, "A5">,
-	<6, "A6">
+	effectiveLine(1, "A1"),
+	effectiveLine(2, "A2"),
+	effectiveLine(3, "A3"),
+	effectiveLine(4, "A4"),
+	effectiveLine(5, "A5"),
+	effectiveLine(6, "A6")
 ], |file://foo1|);
 
 public FileAnalysis fileAnalysis2 = fileAnalysis(9,[], [
-	<1, "A1">,
-	<2, "A2">,
-	<3, "A3">,
-	<4, "A4">,
-	<5, "A5">,
-	<6, "A6">
+	effectiveLine(1, "A1"),
+	effectiveLine(2, "A2"),
+	effectiveLine(3, "A3"),
+	effectiveLine(4, "A4"),
+	effectiveLine(5, "A5"),
+	effectiveLine(6, "A6")
 ], |file://foo2|);
 
 public FileAnalysis fileAnalysis3 = fileAnalysis(5,[], [
-	<1, "A1">,
-	<2, "A2">,
-	<3, "B3">,
-	<4, "B4">,
-	<5, "B5">
+	effectiveLine(1, "A1"),
+	effectiveLine(2, "A2"),
+	effectiveLine(3, "B3"),
+	effectiveLine(4, "B4"),
+	effectiveLine(5, "B5")
 ], |file://foo3|);
 
 public FileAnalysis fileAnalysis4 = fileAnalysis(5,[], [
-	<1, "A1">,
-	<2, "A2">,
-	<3, "B3">,
-	<4, "B4">,
-	<5, "B5">
+	effectiveLine(1, "A1"),
+	effectiveLine(2, "A2"),
+	effectiveLine(3, "B3"),
+	effectiveLine(4, "B4"),
+	effectiveLine(5, "B5")
 ], |file://foo4|);
 
 test bool testDuplicationCalculation() {
