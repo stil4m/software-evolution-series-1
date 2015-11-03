@@ -12,7 +12,7 @@ public void exportToFile(ProjectAnalysis p, loc l) {
 
 public map[str,value] projectAsMap(ProjectAnalysis p) {
 	return (
-		"files" : [fileAsMap(f) | f <- p]
+		"files" : [fileAsMap(f) | f <- p.files]
 	);
 }
 
@@ -27,8 +27,9 @@ private map[str,value] fileAsMap(FileAnalysis f) {
 
 private value classAsMap(ClassAnalysis classAnalysis) {
 	return (
-		"methodCount" : size(classAnalysis),
-		"methods" : [methodAsMap(m) | m <- classAnalysis]
+		"methodCount" : size(classAnalysis.methods),
+		"inner" : classAnalysis.inner,
+		"methods" : [methodAsMap(m) | m <- classAnalysis.methods]
 	);
 }
 

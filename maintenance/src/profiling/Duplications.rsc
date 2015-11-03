@@ -11,7 +11,6 @@ public Profile profileDuplication(ProjectAnalysis projectAnalysis)  {
 	set[LineRefs] duplications = computeDuplications(projectAnalysis);
 	map[FileAnalysis,list[int]] fileDuplications = aggregateDuplications(duplications);
 	
-	println(fileDuplications);
 	int totalDuplications = (0 | it + size(fileDuplications[k]) | k <- fileDuplications);
 	
 	real duplicationPercentage = toReal(totalDuplications) / projectAnalysis.LOC;

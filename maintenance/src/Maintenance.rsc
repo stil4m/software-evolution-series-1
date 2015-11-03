@@ -6,6 +6,7 @@ import metrics::java::LOC;
 import metrics::Constants;
 import Domain;
 import Export;
+import profiling::Profiler;
 
 import List;
 import Type;
@@ -25,17 +26,16 @@ public value mainFunction() {
 	return "OK";
 }
 
-public int getTotalLoc(ProjectAnalysis p) {
-	int totalLOC = 0;
-	for(fileAnalysis <- p) {
-		totalLOC += fileAnalysis[0];	
-	}
-	return totalLOC;
-}
-
 public void doAnalysis(M3 m3Model) {
 	println("<printDateTime(now())> Start analysis");
-	ProjectAnalysis p =  analyseProject(m3Model);
+	ProjectAnalysis p = analyseProject(m3Model);
+	
+	println("<printDateTime(now())> Start Profiling");
+	map[str,Profile] projectProfile = profile(p);
+	
+	println("<printDateTime(now())> Export to file");
+	
+	exportToFile(p, exportPath);
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
