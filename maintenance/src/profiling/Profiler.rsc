@@ -12,9 +12,9 @@ public map[str,Profile] profile(ProjectAnalysis project) {
 	map[str,Profile] result = ();
 	
 	result += ("volume" : profileVolume(project));
-	result += ("complexity per unit" : profileComplexity(project));
+	result += ("complexity_per_unit" : profileComplexity(project));
 	result += ("duplication" : profileDuplication(project));	
-	result += ("unit size" : profileUnitSize(project));
+	result += ("unit_size" : profileUnitSize(project));
 	
 	return result;
 }

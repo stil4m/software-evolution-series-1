@@ -6,11 +6,17 @@
 .maintainability-table td:not(.empty) {
   border: 1px solid black;
   padding: 5px;
-  text-align: right;
 }
 
-.maintainability-table td:not(.component),
-.maintainability-table td:not(.metric) {
+.maintainability-table td.component,
+.maintainability-table td.metric {
+  font-weight: bold;
+}
+.maintainability-table td.content {
   text-align: center;
 }
 
+.average {
+  background: #ddd;
+  font-weight: bold;
+}

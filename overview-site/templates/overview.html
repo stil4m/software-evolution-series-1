@@ -1,50 +1,23 @@
-<h1>TODO: Overview</h1>
+<div ng-controller="ProfileCtrl as ctrl">
+    <h1>TODO: Overview</h1>
 
 
-<table class="maintainability-table">
-    <tr>
-        <td class="empty"></td>
-        <td class="metric">Volume</td>
-        <td class="metric">Complexity per unit</td>
-        <td class="metric">Duplication</td>
-        <td class="metric">Unit size</td>
-        <td class="metric">Unit testing</td>
-    </tr>
-    <tr>
-        <td class="component">Analysability</td>
-        <td>++</td>
-        <td></td>
-        <td>-</td>
-        <td>-</td>
-        <td></td>
-        <td>o</td>
-    </tr>
-    <tr>
-        <td class="component">Changeability</td>
-        <td></td>
-        <td>--</td>
-        <td>-</td>
-        <td></td>
-        <td></td>
-        <td>-</td>
-    </tr>
-    <tr>
-        <td class="component">Stability</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>o</td>
-        <td>o</td>
-    </tr>
-    <tr>
-        <td class="component">Testability</td>
-        <td></td>
-        <td>--</td>
-        <td></td>
-        <td>-</td>
-        <td>o</td>
-        <td>-</td>
-    </tr>
+    <table class="maintainability-table">
+        <tr>
+            <td class="empty"></td>
+            <td class="metric" ng-repeat="column in ctrl.columns">
+                {{column.name}}
+            </td>
+        </tr>
+        <tr ng-repeat="row in ctrl.rows">
+            <td class="component">{{row.name}}</td>
+            <td ng-repeat="column in ctrl.columns" class="content">
+                <span ng-if="row.columns.indexOf(column.id) >= 0">
+                    {{analysis.profile[column.id] | risk }}
+                </span>
+            </td>
+            <td class="average content">{{ctrl.getAverage(row) | risk}}</td>
+        </tr>
 
-</table>
+    </table>
+</div>
