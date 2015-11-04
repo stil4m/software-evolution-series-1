@@ -45,7 +45,7 @@ angular
       {id: 'complexity_per_unit', name: 'Complexity per Unit'},
       {id: 'duplication', name: 'Duplication'},
       {id: 'unit_size', name: 'Unit Size'},
-      //{id: 'unit_testing', name: 'Unit Testing'}
+      {id: 'unit_testing', name: 'Unit Testing'}
     ];
 
     self.rows = [
