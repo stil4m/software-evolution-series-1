@@ -7,6 +7,7 @@ import String;
 
 import lang::java::jdt::m3::Core;
 
+import metrics::java::TestQuality;
 import metrics::java::Complexity;
 import metrics::java::LOC;
 import profiling::Profiler;
@@ -50,6 +51,9 @@ public void sonar(M3 m3Model) {
 	));
 	println("<printDateTime(now())> Done");
 	
+	for(f <- p.files) {
+		println(qualityOfFile(f));
+	}
 	
 }
 
