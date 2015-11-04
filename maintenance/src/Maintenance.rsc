@@ -22,12 +22,10 @@ public value mainFunction() {
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
+	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
 	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
-	
-	 
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
 	
@@ -65,25 +63,31 @@ public void sonar(M3 m3Model) {
 
 public ProjectAnalysis analyseProject(M3 model) {
 	set[loc] compilationUnits = { x| <x,_> <- model@containment, isCompilationUnit(x)};
-	list[FileAnalysis] files = [analyseFile(c, model) | c <- compilationUnits];
+	// Detect JUnit3 test classes 
+	set[loc] allTestClasses = {x | <x,y> <- toList(model@extends)+, /TestCase/ := y.file};
+	
+	list[FileAnalysis] files = [analyseFile(c, model, allTestClasses) | c <- compilationUnits];
+	
 	int totalLoc = (0 | it + file.LOC | file <- files);
 	return projectAnalysis(totalLoc, files);
 }
 
-public FileAnalysis analyseFile(loc cu, M3 model) {
+public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	list[EffectiveLine] lines = [effectiveLine(l.number, trim(l.content)) | l <- relevantLines(cu)];
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
-	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false) | class <- classes];
+	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses) | class <- classes];
 	
 	return fileAnalysis(size(lines), classAnalysisses, lines, cu);
 }
 
-public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner) {
-	list[MethodAnalysis] methods = [analyseMethod(method, model) | method <- methods(model,cl)];
-	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
+public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses) {
+	bool isTestClass = cl in allTestClasses;
+	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass) | method <- methods(model,cl)];
+	list[ClassAnalysis] result = [classAnalysis(methods, inner, isTestClass, cl)];
 	
-	return result + [*analyseClass(nestedClass, model, true) | nestedClass <- nestedClasses(model,cl)];
+	return result + [*analyseClass(nestedClass, model, true, allTestClasses) | nestedClass <- nestedClasses(model,cl)];
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model) = methodAnalysis(relevantLineCount(m), methodComplexity(m, model), m);
+public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass) = methodAnalysis(relevantLineCount(m), methodComplexity(m, model), inTestClass && isTestMethod(m), m);
+private bool isTestMethod(loc method) = startsWith(m.file, "test");

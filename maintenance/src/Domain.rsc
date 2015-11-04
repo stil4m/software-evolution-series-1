@@ -12,9 +12,9 @@ data Profile = plusPlus(ProfileData)
 
 data Risk = low() | moderate() | high() | veryHigh();
 
-data MethodAnalysis = methodAnalysis(int LOC, int cc, loc location);
+data MethodAnalysis = methodAnalysis(int LOC, int cc, bool isTest, loc location);
 
-data ClassAnalysis = classAnalysis(list[MethodAnalysis] methods, bool inner, loc location);
+data ClassAnalysis = classAnalysis(list[MethodAnalysis] methods, bool inner, bool isTest, loc location);
 
 data EffectiveLine = effectiveLine(int number, str content);
 
