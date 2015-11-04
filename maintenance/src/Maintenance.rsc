@@ -37,7 +37,6 @@ public void sonar(M3 m3Model) {
 	
 	println("<printDateTime(now())> Start Profiling");
 	map[str,Profile] projectProfile = profile(p);
-	iprintln(projectProfile);
 	
 	Duration d = now() - analysisStart; 
 	println("Analysis and profiling took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");

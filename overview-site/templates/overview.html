@@ -57,7 +57,7 @@
         </p>
         <p>
             Number of files containing duplicates:
-            <strong>{{analysis.profile.duplication.files}}</strong>
+            <strong>{{analysis.profile.duplication.files.length}}</strong>
         </p>
     </section>
 
@@ -67,19 +67,19 @@
         <table class="table">
             <tr>
                 <td>Low</td>
-                <td>{{analysis.profile.size_per_unit.low || 0}} Lines</td>
+                <td>{{analysis.profile.unit_size.low || 0}} Lines</td>
             </tr>
             <tr>
                 <td>Moderate</td>
-                <td>{{analysis.profile.size_per_unit.moderate || 0}} Lines</td>
+                <td>{{analysis.profile.unit_size.moderate || 0}} Lines</td>
             </tr>
             <tr>
                 <td>High</td>
-                <td>{{analysis.profile.size_per_unit.high || 0}} Lines</td>
+                <td>{{analysis.profile.unit_size.high || 0}} Lines</td>
             </tr>
             <tr>
                 <td>Very High</td>
-                <td>{{analysis.profile.size_per_unit.very_high || 0}} Lines</td>
+                <td>{{analysis.profile.unit_size.very_high || 0}} Lines</td>
             </tr>
         </table>
     </section>
