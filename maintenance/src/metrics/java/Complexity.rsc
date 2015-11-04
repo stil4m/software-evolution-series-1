@@ -14,7 +14,6 @@ public int methodComplexity(loc m, M3 model) {
 	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
 		return complexityOfStatement(impl);
 	}
-	
 	return 0;
 }
 

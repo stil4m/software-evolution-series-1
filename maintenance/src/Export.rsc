@@ -34,13 +34,11 @@ public map[str,value] projectAsMap(ProjectAnalysis p) {
 	);
 }
 
-private map[str,value] fileAsMap(FileAnalysis f) {
-	return (
-		"location" : "<f.location.path>",
-		"lineCount" : "<f.LOC>",
-		"classes" : [classAsMap(c) | c <- f.classes]
-	);
-}
+private map[str,value] fileAsMap(FileAnalysis f) =(
+	"location" : "<f.location.path>",
+	"lineCount" : "<f.LOC>",
+	"classes" : [classAsMap(c) | c <- f.classes]
+);
 
 private value classAsMap(ClassAnalysis classAnalysis) {
 	return (
