@@ -29,6 +29,15 @@ angular
       $scope.activeTab = tab;
     };
   })
+  .directive('linesPercentage', function() {
+    return {
+      scope : {
+        src : '=',
+        total : '='
+      },
+      template : "<span>{{src}} Lines ({{src/total * 100 | number:2 }}%)</span>"
+    }
+  })
   .controller('ProfileCtrl', function ($scope) {
     var self = this;
     self.columns = [

@@ -19,9 +19,9 @@ public value mainFunction() {
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
+	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
@@ -38,12 +38,16 @@ public void sonar(M3 m3Model) {
 	println("<printDateTime(now())> Start Profiling");
 	map[str,Profile] projectProfile = profile(p);
 	
-	Duration d = now() - analysisStart; 
+	datetime analysisEnd = now();
+	Duration d = analysisEnd - analysisStart; 
 	println("Analysis and profiling took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
 	
 	println("<printDateTime(now())> Export to file");
 	
-	exportToFile(p, projectProfile, exportPath);
+	exportToFile(p, projectProfile, exportPath, (
+		"start" : analysisStart,
+		"end": analysisEnd
+	));
 	println("<printDateTime(now())> Done");
 	
 	

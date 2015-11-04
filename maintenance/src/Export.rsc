@@ -4,15 +4,18 @@ import Domain;
 import IO;
 import lang::json::IO;
 import List;
+import String;
 
-public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l) {
+public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l, map[str,datetime] timing) {
 	value json = (
+		"timing" : timingAsMap(timing),
 		"project" : projectAsMap(p),
 		"profile" : (k : profileToInt(profile[k]) | k <- profile)
 	);
 	writeFile(l, toJSON(json, true));
 }
 
+private map[str,str] timingAsMap(map[str,datetime] timing) = (k : replaceAll("<timing[k]>","$", "") | k <- timing);
 private map[str,value] profileToInt(plusPlus(d)) = profileValue(5,d);
 private map[str,value] profileToInt(plus(d)) = profileValue(4,d);
 private map[str,value] profileToInt(neutral(d)) = profileValue(3,d);

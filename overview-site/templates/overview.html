@@ -19,6 +19,21 @@
     </table>
 
     <section class="maintainability-concept">
+        <h4>Timing:</h4>
+
+        <table class="table">
+            <tr>
+                <td>Start:</td>
+                <td>{{analysis.timing.start | date:'yyyy-MM-dd HH:mm:ss.sss'}}</td>
+            </tr>
+            <tr>
+                <td>End:</td>
+                <td>{{analysis.timing.end | date:'yyyy-MM-dd HH:mm:ss.sss'}}</td>
+            </tr>
+        </table>
+    </section>
+
+    <section class="maintainability-concept">
         <h4>Volume</h4>
 
         The volume of the program is
@@ -31,19 +46,27 @@
         <table class="table">
             <tr>
                 <td>Low</td>
-                <td>{{analysis.profile.complexity_per_unit.low || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.low" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
             <tr>
                 <td>Moderate</td>
-                <td>{{analysis.profile.complexity_per_unit.moderate || 0}} Lines</td>
+                <td>
+                <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.moderate" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
             <tr>
                 <td>High</td>
-                <td>{{analysis.profile.complexity_per_unit.high || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.high" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
             <tr>
                 <td>Very High</td>
-                <td>{{analysis.profile.complexity_per_unit.very_high || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.very_high" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
         </table>
     </section>
@@ -55,6 +78,7 @@
             Number of duplicate lines:
             <strong>{{analysis.profile.duplication.count}}</strong>
         </p>
+
         <p>
             Number of files containing duplicates:
             <strong>{{analysis.profile.duplication.files.length}}</strong>
@@ -67,19 +91,27 @@
         <table class="table">
             <tr>
                 <td>Low</td>
-                <td>{{analysis.profile.unit_size.low || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.low" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
             <tr>
                 <td>Moderate</td>
-                <td>{{analysis.profile.unit_size.moderate || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.moderate" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
             <tr>
                 <td>High</td>
-                <td>{{analysis.profile.unit_size.high || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.high" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
             <tr>
                 <td>Very High</td>
-                <td>{{analysis.profile.unit_size.very_high || 0}} Lines</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.very_high" data-total="analysis.profile.volume.size"></span>
+                </td>
             </tr>
         </table>
     </section>
