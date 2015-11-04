@@ -6,6 +6,7 @@ import DateTime;
 
 import profiling::Complexity;
 import profiling::UnitSize;
+import profiling::UnitTesting;
 import profiling::Volume;
 import profiling::Duplications;
 
@@ -20,6 +21,8 @@ public map[str,Profile] profile(ProjectAnalysis project) {
 	result += ("duplication" : profileDuplication(project));	
 	println("<printDateTime(now())> Profiling \> unit size...");
 	result += ("unit_size" : profileUnitSize(project));
+	println("<printDateTime(now())> Profiling \> unit testing...");
+	result += ("unit_testing" : profileUnitTesting(project));
 	
 	return result;
 }
