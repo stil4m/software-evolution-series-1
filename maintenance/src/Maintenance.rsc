@@ -8,6 +8,7 @@ import String;
 import lang::java::jdt::m3::Core;
 
 import metrics::java::TestQuality;
+import metrics::java::TestMethods;
 import metrics::java::Complexity;
 import metrics::java::LOC;
 import profiling::Profiler;
@@ -24,6 +25,8 @@ public value mainFunction() {
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
 	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
+	
+	 
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
 	
