@@ -14,6 +14,7 @@ import metrics::java::LOC;
 import profiling::Profiler;
 import Domain;
 import Export;
+import TestExtractor;
 
 public loc exportPath = |project://maintenance/export.json|;
 
@@ -38,6 +39,8 @@ public void sonar(M3 m3Model) {
 	datetime analysisStart = now();
 	println("<printDateTime(analysisStart)> Start analysis");
 	ProjectAnalysis p = analyseProject(m3Model);
+	
+	convertProject(p,m3Model);
 	
 	println("<printDateTime(now())> Start Profiling");
 	map[str,Profile] projectProfile = profile(p);
