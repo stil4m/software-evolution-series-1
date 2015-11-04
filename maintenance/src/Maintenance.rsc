@@ -3,6 +3,7 @@ module Maintenance
 import DateTime;
 import IO;
 import List;
+import Set;
 import String;
 
 import lang::java::jdt::m3::Core;
@@ -14,7 +15,6 @@ import metrics::java::LOC;
 import profiling::Profiler;
 import Domain;
 import Export;
-import TestExtractor;
 
 public loc exportPath = |project://maintenance/export.json|;
 
@@ -24,7 +24,7 @@ public value mainFunction() {
 	
 	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
@@ -58,7 +58,6 @@ public void sonar(M3 m3Model) {
 	for(f <- p.files) {
 		println(qualityOfFile(f));
 	}
-	
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
@@ -78,16 +77,19 @@ public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses) | class <- classes];
 	
-	return fileAnalysis(size(lines), classAnalysisses, lines, cu);
+	bool containsTestClass = any(ClassAnalysis cl <- classAnalysisses , cl.location in allTestClasses);	
+	return fileAnalysis(size(lines), classAnalysisses, lines, containsTestClass, cu);
 }
 
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses) {
 	bool isTestClass = cl in allTestClasses;
 	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass) | method <- methods(model,cl)];
-	list[ClassAnalysis] result = [classAnalysis(methods, inner, isTestClass, cl)];
+	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
 	
 	return result + [*analyseClass(nestedClass, model, true, allTestClasses) | nestedClass <- nestedClasses(model,cl)];
 }
 
 public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass) = methodAnalysis(relevantLineCount(m), methodComplexity(m, model), inTestClass && isTestMethod(m), m);
-private bool isTestMethod(loc method) = startsWith(m.file, "test");
+
+//In JUnit3 methods should Start with "test"
+private bool isTestMethod(loc m) = startsWith(m.file, "test");
