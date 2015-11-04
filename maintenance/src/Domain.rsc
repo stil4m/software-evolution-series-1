@@ -14,10 +14,10 @@ data Risk = low() | moderate() | high() | veryHigh();
 
 data MethodAnalysis = methodAnalysis(int LOC, int cc, bool isTest, loc location);
 
-data ClassAnalysis = classAnalysis(list[MethodAnalysis] methods, bool inner, bool isTest, loc location);
+data ClassAnalysis = classAnalysis(list[MethodAnalysis] methods, bool inner, loc location);
 
 data EffectiveLine = effectiveLine(int number, str content);
 
-data FileAnalysis = fileAnalysis(int LOC, list[ClassAnalysis] classes, list[EffectiveLine] lines, loc location);
+data FileAnalysis = fileAnalysis(int LOC, list[ClassAnalysis] classes, list[EffectiveLine] lines, bool containsTestClass, loc location);
 
 data ProjectAnalysis = projectAnalysis(int LOC, list[FileAnalysis] files);
