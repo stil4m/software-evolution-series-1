@@ -20,13 +20,8 @@ private int DUPLICATION_LENGTH = 6;
 public set[LineRefs] computeDuplications(ProjectAnalysis project) {
 	LineDB db = buildDb(project);
 	db = filterByOccurences(2, db);
-	set[LineRefs] duplications = {};
 	
-	for ( key <- db) {
-		<depth, newDuplications, _> = analyzeKey(key, db, duplications);
-		duplications = newDuplications;
-	}
-	return duplications;
+	return ({} | analyzeKey(key, db, it)[1] | key <- db);
 }
 
 public map[FileAnalysis,list[int]] aggregateDuplications(set[LineRefs] duplications) {
@@ -56,9 +51,8 @@ private LineDB buildDb(ProjectAnalysis project) {
 	return db;
 }
 
-private tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) {
-	return computeDupTree(key, db[key], duplications, 1);
-}
+private tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) 
+	= computeDupTree(key, db[key], duplications, 1);
 
 private tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs refs, set[LineRefs] duplications, int currentDepth) {
 	bool deepEnough = currentDepth >= DUPLICATION_LENGTH;
@@ -68,26 +62,15 @@ private tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs re
 		return <true, duplications, refs>;
 	}
 	
-	map[str,LineRefs] x = ();
-	for (<f,c> <- withNextLine(refs)) {
-		EffectiveLine line = f.lines[c+1];
-		x = assocMap(x,line.content,<f,c+1>);
-	}
-	
-	set[LineRefs] childrenSets;
-	childrenSets = for (y <- x, size(x[y]) > 1) {
-		<subDeepEnough, newDuplications, subChildren> = computeDupTree(y, x[y], duplications, currentDepth+1);
-		duplications = newDuplications;
-		if (subDeepEnough) {
-			append {<f,ln-1> | <f,ln> <- subChildren};
-		}
-	}
+	list[LineRefs] childrenSets;
+	map[str,LineRefs] nextGroups = groupByNextEffectiveLine(refs);
+	<childrenSets, duplications> = getDeepEnoughChildrenSets(nextGroups, duplications, currentDepth);
 	
 	if (deepEnough) {
 		duplications += {refs};
 		return <true, duplications, refs>;
 	} else if (!isEmpty(childrenSets)) {
-		children = { c | c <- childrenSets};
+		children = toSet(childrenSets);
 		duplications += children;
 		return <size(childrenSets) != 0, duplications, union(children)>;
 	} else {
@@ -95,6 +78,18 @@ private tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs re
 	}
 }
 
+private tuple[list[LineRefs], set[LineRefs]] getDeepEnoughChildrenSets(map[str,LineRefs] nextGroups,set[LineRefs] duplications,  int currentDepth) {
+ 	childrenSets = for (y <- nextGroups, size(nextGroups[y]) > 1) {
+		<subDeepEnough, duplications, subChildren> = computeDupTree(y, nextGroups[y], duplications, currentDepth+1);
+		if (subDeepEnough) {
+			append {<f,ln-1> | <f,ln> <- subChildren};
+		}
+	}
+	return <childrenSets, duplications>;
+}
+private map[str,LineRefs] groupByNextEffectiveLine(LineRefs refs) =
+	( () | assocMap(it, f.lines[c+1].content, <f,c+1>) | <f,c> <- refs, hasNextLine(f,c));
+	
 private map[&T,set[&S]] assocMap(map[&T,set[&S]] m, &T t, &S s) {
 	if (m[t]?) {
 		return m[t] += s;
@@ -104,11 +99,4 @@ private map[&T,set[&S]] assocMap(map[&T,set[&S]] m, &T t, &S s) {
 	}
 }
 
-private set[str] infoLineRefs(LineRefs l) {
-	return {"(<ln> - <location.file>)" | <<_,_,_,location>,ln> <- l};
-}
-private LineRefs withNextLine(LineRefs refs) = {<f,i> | <f,i> <- refs, fileAnalysisHasLine(f, i+1)};
-
-private bool fileAnalysisHasLine(FileAnalysis f, int ln) {
-	return ln < size(f.lines);
-}
+private bool hasNextLine(FileAnalysis f, int ln) = ln + 1 < size(f.lines);

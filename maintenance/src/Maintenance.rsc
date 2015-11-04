@@ -4,6 +4,7 @@ import DateTime;
 import IO;
 import List;
 import String;
+import Set;
 
 import lang::java::jdt::m3::Core;
 
@@ -22,7 +23,7 @@ public value mainFunction() {
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
+	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
 	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
@@ -38,7 +39,7 @@ public void sonar(M3 m3Model) {
 	println("<printDateTime(analysisStart)> Start analysis");
 	ProjectAnalysis p = analyseProject(m3Model);
 	
-	convertProject(p,m3Model);
+	//convertProject(p,m3Model);
 	
 	println("<printDateTime(now())> Start Profiling");
 	map[str,Profile] projectProfile = profile(p);
@@ -90,4 +91,4 @@ public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] a
 }
 
 public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass) = methodAnalysis(relevantLineCount(m), methodComplexity(m, model), inTestClass && isTestMethod(m), m);
-private bool isTestMethod(loc method) = startsWith(m.file, "test");
+private bool isTestMethod(loc method) = startsWith(method.file, "test");
