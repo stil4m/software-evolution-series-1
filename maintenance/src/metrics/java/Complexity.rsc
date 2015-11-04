@@ -18,7 +18,7 @@ public int methodComplexity(loc m, M3 model) {
 	return 0;
 }
 
-private int complexityOfStatement(Statement statement) {
+int complexityOfStatement(Statement statement) {
 	int i = 1;
 	visit (statement) {
 		case \foreach(Declaration parameter, Expression collection, Statement body) : 
@@ -31,9 +31,9 @@ private int complexityOfStatement(Statement statement) {
 			i += 1;
 		case \if(Expression condition, Statement thenBranch) : 
 			i += 1;
-		case /^\|\|$/ : 
+		case \infix(_,/^\|\|$/,_) : 
 			i += 1;
-		case /^&&$/ : 
+		case \infix(_,/^&&$/,_) : 
 			i += 1;
 		case \if(Expression condition, Statement thenBranch, Statement elseBranch) : 
 			i += 1;
