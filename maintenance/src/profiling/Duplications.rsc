@@ -19,8 +19,6 @@ public Profile profileDuplication(ProjectAnalysis projectAnalysis)  {
 		"count" : totalDuplications 
 	);
 	
-	
-	
 	real duplicationPercentage = toReal(totalDuplications) / projectAnalysis.LOC;
 
 	if (duplicationPercentage <= 0.03) return plusPlus(fileDuplicationData);

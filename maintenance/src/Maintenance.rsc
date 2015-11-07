@@ -5,6 +5,7 @@ import IO;
 import List;
 import Set;
 import String;
+import Set;
 
 import lang::java::jdt::m3::Core;
 
@@ -22,7 +23,7 @@ public value mainFunction() {
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	//m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
+	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
 	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
