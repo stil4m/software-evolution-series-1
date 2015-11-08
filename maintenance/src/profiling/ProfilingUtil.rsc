@@ -1,6 +1,9 @@
 module profiling::ProfilingUtil
 
 import util::Math;
+import List;
+import IO;
+
 import Domain;
 
 public Profile convertToProfile(RiskProfile riskProfile, int totalLOC) {
@@ -25,6 +28,30 @@ private str stringListKey(low()) = "low";
 private str stringListKey(moderate()) = "moderate";
 private str stringListKey(high()) = "high";
 private str stringListKey(veryHigh()) = "very_high";
+
+
+public Profile mergeProfiles(lrel[str, Profile] profiles) {
+	ProfileData result = ();
+	
+	iprintln(profiles);
+	
+	int newRating = round(( 0. | it + profileToInt(profile) | <_,profile> <- profiles) / size(profiles));
+	ProfileData combinedProfileData = ( result | it + (subTitle : profile.profileData) | <subTitle, profile> <- profiles);
+	
+	return intToProfile(newRating, combinedProfileData);
+}
+
+private int profileToInt(minusMinus(_)) = 1;
+private int profileToInt(minus(_)) = 2;
+private int profileToInt(neutral(_)) = 3;
+private int profileToInt(plus(_)) = 4;
+private int profileToInt(plusPlus(_)) = 5;
+
+private Profile intToProfile(1, ProfileData profileData) = minusMinus(profileData);
+private Profile intToProfile(2, ProfileData profileData) = minus(profileData);
+private Profile intToProfile(3, ProfileData profileData) = neutral(profileData);
+private Profile intToProfile(4, ProfileData profileData) = plus(profileData);
+private Profile intToProfile(5, ProfileData profileData) = plusPlus(profileData);
 
 
 public Profile profileForValues(int m, int h, int vh, int total) = convertToProfile((

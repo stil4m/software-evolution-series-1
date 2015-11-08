@@ -115,4 +115,36 @@
             </tr>
         </table>
     </section>
+
+    <section class="maintainability-concept">
+        <h4>Unit testing</h4>
+
+        <table class="table">
+            <tr>
+                <td>Test Volume</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_volume.test_volume" data-total="analysis.profile.volume.size"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Number of unit tests</td>
+                <td>{{analysis.profile.unit_testing.unit_test_volume.unit_test_count}}</td>
+            </tr>
+        </table>
+
+        <p>TODO: Represent these nicer:</p>
+
+
+        <table class="table">
+            <tbody ng-repeat="(subTitle,subProfile) in analysis.profile.unit_testing">
+                <tr><th colspan="2">{{subTitle}}</th></tr>
+
+                <tr ng-repeat="(key,value) in subProfile">
+                    <td>{{key}}</td>
+                    <td>{{value}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
 </div>

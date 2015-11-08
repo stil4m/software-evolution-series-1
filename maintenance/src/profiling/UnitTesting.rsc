@@ -3,23 +3,24 @@ module profiling::UnitTesting
 import Domain;
 import IO;
 import util::Math;
+import lang::java::jdt::m3::Core;
+import lang::java::jdt::m3::AST;
 
-public Profile profileUnitTesting(ProjectAnalysis project) {
-	int totalLOC = project.LOC;
-	list[FileAnalysis] testFiles = [file | file <- project.files, file.containsTestClass];
-	int totalTestLOC = (0 | it + file.LOC | file <- testFiles);
+import profiling::ProfilingUtil;
+import profiling::UnitTestCoverage;
+import profiling::UnitTestVolume;
+import profiling::UnitTestQuality;
+
+public Profile profileUnitTesting(ProjectAnalysis project, M3 m3Model) {
+	Profile unitTestCoverage = profileUnitTestCoverage(project, m3Model);
+	Profile unitTestVolume = profileUnitTestVolume(project);
+	Profile unitTestQuality = profileUnitTestQuality(project);
+	result = mergeProfiles([
+		<"unit_test_coverage", unitTestCoverage>, 
+		<"unit_test_volume", unitTestVolume>, 
+		<"unit_test_quality", unitTestQuality>]);
 	
-	int testMethodCount = (0 | it + 1 | file <- testFiles, class <- file.classes, method <- class.methods);
-	
-	ProfileData profileData = ("Test volume" : totalTestLOC,
-								"Test method count": testMethodCount,
-								"Test volume percentage" : getTestRate(totalTestLOC, totalLOC),
-								"Testable methods" : 0,
-								"Methods tested": 0);
-								
-	iprintln(profileData);
-									
-	return plusPlus(profileData);
+	iprintln(result);
+	return result;
 }
 
-private real getTestRate(int testLOC, int totalLOC) = toReal(testLOC) / totalLOC;

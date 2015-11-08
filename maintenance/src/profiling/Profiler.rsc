@@ -3,6 +3,7 @@ module profiling::Profiler
 import Domain;
 import IO;
 import DateTime;
+import lang::java::jdt::m3::Core;
 
 import profiling::Complexity;
 import profiling::UnitSize;
@@ -10,7 +11,7 @@ import profiling::UnitTesting;
 import profiling::Volume;
 import profiling::Duplications;
 
-public map[str,Profile] profile(ProjectAnalysis project) {
+public map[str,Profile] profile(ProjectAnalysis project, M3 model) {
 	map[str,Profile] result = ();
 	
 	println("<printDateTime(now())> Profiling \> volume...");
@@ -22,7 +23,7 @@ public map[str,Profile] profile(ProjectAnalysis project) {
 	println("<printDateTime(now())> Profiling \> unit size...");
 	result += ("unit_size" : profileUnitSize(project));
 	println("<printDateTime(now())> Profiling \> unit testing...");
-	result += ("unit_testing" : profileUnitTesting(project));
+	result += ("unit_testing" : profileUnitTesting(project, model));
 	
 	return result;
 }

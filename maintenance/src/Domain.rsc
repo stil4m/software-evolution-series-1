@@ -4,11 +4,11 @@ alias RiskProfile = map[Risk, int];
 
 alias ProfileData = map[str, value];
 
-data Profile = plusPlus(ProfileData) 
-			| plus(ProfileData) 
-			| neutral(ProfileData) 
-			| minus(ProfileData) 
-			| minusMinus(ProfileData);
+data Profile = plusPlus(ProfileData profileData) 
+			| plus(ProfileData profileData) 
+			| neutral(ProfileData profileData) 
+			| minus(ProfileData profileData) 
+			| minusMinus(ProfileData profileData);
 
 data Risk = low() | moderate() | high() | veryHigh();
 

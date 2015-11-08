@@ -6,7 +6,6 @@ import List;
 import Set;
 import String;
 import Set;
-
 import lang::java::jdt::m3::Core;
 
 import metrics::java::TestQuality;
@@ -25,7 +24,7 @@ public value mainFunction() {
 	
 	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
 	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
 	
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
@@ -40,7 +39,7 @@ public void sonar(M3 m3Model) {
 	ProjectAnalysis p = analyseProject(m3Model);
 	
 	println("<printDateTime(now())> Start Profiling");
-	map[str,Profile] projectProfile = profile(p);
+	map[str,Profile] projectProfile = profile(p, m3Model);
 	
 	datetime analysisEnd = now();
 	Duration d = analysisEnd - analysisStart; 
@@ -52,11 +51,9 @@ public void sonar(M3 m3Model) {
 		"start" : analysisStart,
 		"end": analysisEnd
 	));
+	
 	println("<printDateTime(now())> Done");
 	
-	for(f <- p.files) {
-		println(qualityOfFile(f));
-	}
 }
 
 public ProjectAnalysis analyseProject(M3 model) {
