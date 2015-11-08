@@ -11,7 +11,7 @@ public Profile profileUnitSize(ProjectAnalysis project) {
 	return convertToProfile(riskProfile, project.LOC);
 }
 
-private Risk getUnitSizeRisk(int unitSize) {
+Risk getUnitSizeRisk(int unitSize) {
 	if (unitSize <= 20) return low();
 	if (unitSize <= 50) return moderate();
 	if (unitSize <= 100) return high();	

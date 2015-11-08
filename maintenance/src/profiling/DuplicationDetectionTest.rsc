@@ -10,7 +10,7 @@ public FileAnalysis fileAnalysis1 = fileAnalysis(6, [], [
 	effectiveLine(4, "A4"),
 	effectiveLine(5, "A5"),
 	effectiveLine(6, "A6")
-], |file://foo1|);
+], false, |file://foo1|);
 
 public FileAnalysis fileAnalysis2 = fileAnalysis(9,[], [
 	effectiveLine(1, "A1"),
@@ -19,7 +19,7 @@ public FileAnalysis fileAnalysis2 = fileAnalysis(9,[], [
 	effectiveLine(4, "A4"),
 	effectiveLine(5, "A5"),
 	effectiveLine(6, "A6")
-], |file://foo2|);
+], false, |file://foo2|);
 
 public FileAnalysis fileAnalysis3 = fileAnalysis(5,[], [
 	effectiveLine(1, "A1"),
@@ -27,7 +27,7 @@ public FileAnalysis fileAnalysis3 = fileAnalysis(5,[], [
 	effectiveLine(3, "B3"),
 	effectiveLine(4, "B4"),
 	effectiveLine(5, "B5")
-], |file://foo3|);
+], false, |file://foo3|);
 
 public FileAnalysis fileAnalysis4 = fileAnalysis(5,[], [
 	effectiveLine(1, "A1"),
@@ -35,7 +35,7 @@ public FileAnalysis fileAnalysis4 = fileAnalysis(5,[], [
 	effectiveLine(3, "B3"),
 	effectiveLine(4, "B4"),
 	effectiveLine(5, "B5")
-], |file://foo4|);
+], false, |file://foo4|);
 
 test bool testDuplicationCalculationWithMultipleFileAnalysisses() {
 	output = computeDuplications(projectAnalysis(0, [fileAnalysis1,fileAnalysis2,fileAnalysis3,fileAnalysis4]));
