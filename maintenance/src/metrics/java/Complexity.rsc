@@ -13,7 +13,10 @@ public int methodComplexity(loc m, M3 model) {
 	Declaration t = getMethodASTEclipse(m, model=model);
 	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
 		return complexityOfStatement(impl);
+	} else if (\constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
+		return complexityOfStatement(impl);
 	}
+	
 	return 0;
 }
 
