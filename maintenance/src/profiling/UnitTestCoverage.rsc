@@ -10,53 +10,51 @@ import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
 
 import profiling::ProfilingUtil;
-// We choose to do the coverage on file basis:
-// File:
-// 	Pros: 
-//		- You can relate it to the LOC
-//		- Allow you to include the complexity of private methods
-//  Cons: 
-//		- You are adding up the complexity. e.g. non complexmethod with lots of test could compensate for complex methods with no tests.
-//
-// (Alternative): Method:
-//	Pros: 
-//		- Very specific
-//	Cons:
-//		- How should you treat private methods
-//
+
 public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 	set[FileAnalysis] nonTestFiles = { file | file <- project.files, !file.containsTestClass};
 	set[loc] testMethods = { method.location | file <- project.files, file.containsTestClass, class <- file.classes, method <- class.methods};
 	
+	int totalNonTestLoc = 0;
 	RiskProfile riskProfile = ();
 	for (FileAnalysis file <- nonTestFiles) {
-		if (!isEmpty([ method | ClassAnalysis class <- file.classes, method <- class.methods])) { 	
-			riskProfile[calculateCoverageRisk(file, m3Model, testMethods)] ? 0 += file.LOC;
+		fileUnitSize = (0 | it + method.LOC | class <- file.classes, method <- class.methods);
+		totalNonTestLoc += fileUnitSize;
+	
+		if (!isEmpty([ method | ClassAnalysis class <- file.classes, method <- class.methods, isTestable(method.location, m3Model)])) {
+			Risk risk = calculateCoverageRisk(file, m3Model, testMethods);
+			riskProfile[risk] ? 0 += fileUnitSize;
 		}
 	}
 	
-	int nonTestLOC = (0 | it + file.LOC | file <- nonTestFiles);
-	return convertToProfile(riskProfile, nonTestLOC);
+	return convertToProfile(riskProfile, totalNonTestLoc);
 }
-
 
 private Risk calculateCoverageRisk(FileAnalysis file, M3 m3Model, set[loc] testMethods) {
-	//set[loc] methods = { method.location | class <- file.classes, method <- class.methods};
-	//int totalInvocationCount = ( 0 | it + 1 | <lhs,rhs> <- m3Model@methodInvocation, lhs in testMethods, rhs in methods);
-	//int totalComplexity = ( 0 | it + method.cc | class <- file.classes, method <- class.methods);
-	//return getCoverageRisk(totalInvocationCount, totalComplexity);	//OR
-	set[loc] testableMethods = { method.location | class <- file.classes, method <- class.methods, isTestable(method.location, m3Model)};
-	int numberOfInvokedTestableMethods = size({rhs | <lhs,rhs> <- m3Model@methodInvocation, lhs in testMethods, rhs in testableMethods});
-	if(size(testableMethods) == 0 ) {
-		return low();
-	}
-	return getCoverageRisk(numberOfInvokedTestableMethods, size(testableMethods));
-}
-
-private Risk getCoverageRisk(int invocationCount, int complexity) {
-	real coverage = toReal(invocationCount) / complexity;
+	set[MethodAnalysis] methods = { method | class <- file.classes, method <- class.methods};
+	set[loc] methodLocs = {method.location | method <- methods};
+	rel[loc,loc] invocations = { <lhs,rhs> | <lhs,rhs> <- m3Model@methodInvocation, lhs in testMethods, rhs in methodLocs};
+	map[loc, int] methodComplexityMap = (() | it + (method.location : method.cc) | method <- methods); 
 	
-	if (coverage <= .4) return veryHigh();
+	list[real] coverages = [];
+	for(method <- methods, isTestable(method.location, m3Model)){
+		//Exclude recursive call
+		set[loc] invokedMethods = { <lhs,rhs> | <lhs,rhs> <- invocations+, lhs == method.location, rhs != method.location};
+		int invokedComplexity = (0 | it + methodComplexityMap[invokedMethod] | invokedMethod <- invokedMethods); 
+		
+		int requiredNumberOfInvocations = method.cc + invokedComplexity - size(invokedMethods);
+		int invocationCount = ( 0 | it + 1 | <lhs,rhs> <- invocations, rhs == method.location);
+		real coverage = toReal(invocationCount) / requiredNumberOfInvocations;
+		
+		//Preven outliers 
+		coverages += min(coverage, 1.0); 
+	}
+	
+	real fileCoverage = sum(coverages) / size(coverages); 
+	return getCoverageRisk(fileCoverage);}
+
+private Risk getCoverageRisk(real coverage) {
+	if (coverage <= .3) return veryHigh();
 	if (coverage <= .6) return high();
 	if (coverage <= .8) return moderate();	
 	return low();
