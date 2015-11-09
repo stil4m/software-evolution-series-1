@@ -21,7 +21,6 @@ public map[loc,int] methodComplexity(set[loc] classMethods, M3 model, Declaratio
 			result += handleMethodNode(x@src, absMethodLocations, impl);
 		}
 	}
-	iprintln(result);
 	return result;
 }
 

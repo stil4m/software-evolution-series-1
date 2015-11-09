@@ -18,9 +18,9 @@ public Profile profileUnitTesting(ProjectAnalysis project, M3 m3Model) {
 	result = mergeProfiles([
 		<"unit_test_coverage", unitTestCoverage>, 
 		<"unit_test_volume", unitTestVolume>, 
-		<"unit_test_quality", unitTestQuality>]);
+		<"unit_test_quality", unitTestQuality>
+	]);
 	
-	iprintln(result);
 	return result;
 }
 

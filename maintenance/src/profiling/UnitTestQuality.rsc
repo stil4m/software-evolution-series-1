@@ -36,10 +36,10 @@ private bool isTestMethod(method) {
 }
 
 private bool isTestContext(str s) {
-	return /\s*assert/ := s 
-		|| /\s*verify/ := s
-		|| /\s*check/ := s
-		|| /\s*test/ := s
-		|| /\s*should/ := s
+	return /^\s*assert/ := s 
+		|| /^\s*verify/ := s
+		|| /^\s*check/ := s
+		|| /^\s*test/ := s
+		|| /^\s*should/ := s
 		|| /\s*fail/ := s;
 }

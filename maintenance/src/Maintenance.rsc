@@ -22,11 +22,6 @@ public loc projectLoc = |project://smallsql0.21_src|;
 //public loc projectLoc = |project://hello-world-java|;
 
 public value mainFunction() {
-	map[int,int] m = ();
-	int foo() = { println("CALLED"); return 1;};
-	m[foo()] ? 0 += 1;
-
-
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
@@ -77,8 +72,6 @@ public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	list[EffectiveLine] lines = relevantLines(cu);
 
 	Declaration declaration = createAstFromFile(cu, false, javaVersion="1.7");
-	//map[loc,int] complexityPerMethod = methodComplexity(cu, model, declaration);
-	//iprintln(complexityPerMethod);
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses, declaration) | class <- classes];
@@ -90,9 +83,10 @@ public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses, Declaration declaration) {
 	bool isTestClass = cl in allTestClasses;
 	
-	map[loc,int] complexityPerMethod = methodComplexity(methods(model,cl), model, declaration);
+	set[loc] classMethods = methods(model,cl);
+	map[loc,int] complexityPerMethod = methodComplexity(classMethods, model, declaration);
 	
-	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass, complexityPerMethod[method]) | method <- methods(model,cl)];
+	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass, complexityPerMethod[method]? 0) | method <- classMethods];
 	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
 	
 	return result + [*analyseClass(nestedClass, model, true, allTestClasses, declaration) | nestedClass <- nestedClasses(model,cl)];
