@@ -31,13 +31,16 @@ private str stringListKey(veryHigh()) = "very_high";
 
 
 public Profile mergeProfiles(lrel[str, Profile] profiles) {
-	ProfileData result = ();
+	ProfileData combinedProfileData = ();
+	real rating = 0.;
 	
-	iprintln(profiles);
-	
-	int newRating = round(( 0. | it + profileToInt(profile) | <_,profile> <- profiles) / size(profiles));
-	ProfileData combinedProfileData = ( result | it + (subTitle : profile.profileData) | <subTitle, profile> <- profiles);
-	
+	for (<subTitle, profile> <- profiles) {
+		int profileRating = profileToInt(profile);
+		rating += profileRating;
+		profile.profileData["rating"] = profileRating;
+		combinedProfileData[subTitle] = profile.profileData;
+	}
+	int newRating = round(rating / size(profiles));
 	return intToProfile(newRating, combinedProfileData);
 }
 

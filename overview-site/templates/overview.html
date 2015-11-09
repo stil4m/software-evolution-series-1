@@ -120,7 +120,7 @@
         <h4>Unit testing</h4>
         <p>Unit testing is composed by the average of test volume, test coverage and test quality.</p>
 
-        <h5>Test Volume</h5>
+        <h5>Test Volume ({{analysis.profile.unit_testing.unit_test_volume.rating | risk }})</h5>
         <table class="table">
             <tr>
                 <td>Test Volume</td>
@@ -134,7 +134,7 @@
             </tr>
         </table>
 
-        <h5>Test Quality</h5>
+        <h5>Test Quality ({{analysis.profile.unit_testing.unit_test_quality.rating | risk }})</h5>
         <p>The quality of test code relative to the total lines of test code.</p>
         <table class="table">
             <tr>
@@ -163,7 +163,7 @@
             </tr>
         </table>
 
-        <h5>Test Coverage</h5>
+        <h5>Test Coverage ({{analysis.profile.unit_testing.unit_test_coverage.rating | risk }})</h5>
         <p>The coverage of code relative to the total lines of source code (test lines excluded).</p>
         <table class="table">
             <tr>
