@@ -25,7 +25,7 @@ public class InnerClass {
 			
 			if(a > 0 && a > 1 && a > 2 || a > 3 || a < 1000000)
 			{
-				System.out.println("CRAZY");
+			System.out.println("CRAZY");
 			}
 
 			return super.clone();

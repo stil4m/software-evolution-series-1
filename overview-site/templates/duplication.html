@@ -1,1 +1,15 @@
-<h1>TODO: Duplication</h1>
+<div ng-controller="DuplicationCtrl as ctrl" class="duplications">
+    <div ng-init="duplications = analysis.profile.duplication">
+        <div ng-repeat="file in duplications.files" class="file-block">
+            <h4 title="{{file.path}}">{{file.path | fileName}}</h4>
+
+            <h5>Duplicated Blocks</h5>
+
+            <div ng-init="duplicatedBlocks = ctrl.getDuplicatedBlocks(file)">
+                <div ng-repeat="duplicatedBlock in duplicatedBlocks">
+                    <pre>{{duplicatedBlock | asCodeBlock }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,7 @@ import DateTime;
 import Map;
 import Set;
 import Type;
+import String;
 
 alias LineRef = tuple[FileAnalysis, int];
 alias LineRefs = set[LineRef];
@@ -44,7 +45,7 @@ private LineDB buildDb(ProjectAnalysis project) {
 	for(file <- project.files) {
 		int index = 0;
 		for (effectiveLine <- file.lines) {
-			db = assocMap(db,effectiveLine.content,<file,index>);
+			db = assocMap(db,trim(effectiveLine.content),<file,index>);
 			index += 1;
 		}
 	}
@@ -88,7 +89,7 @@ private tuple[list[LineRefs], set[LineRefs]] getDeepEnoughChildrenSets(map[str,L
 	return <childrenSets, duplications>;
 }
 private map[str,LineRefs] groupByNextEffectiveLine(LineRefs refs) =
-	( () | assocMap(it, f.lines[c+1].content, <f,c+1>) | <f,c> <- refs, hasNextLine(f,c));
+	( () | assocMap(it, trim(f.lines[c+1].content), <f,c+1>) | <f,c> <- refs, hasNextLine(f,c));
 	
 private map[&T,set[&S]] assocMap(map[&T,set[&S]] m, &T t, &S s) {
 	if (m[t]?) {
