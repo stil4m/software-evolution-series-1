@@ -25,7 +25,7 @@ public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 		}
 	}
 	
-	int totalTestVOLUME = (0 | it + file.LOC | file <- project.files, file.containsTestClass);
+	int totalTestVolume = (0 | it + file.LOC | file <- project.files, file.containsTestClass);
 	return convertToProfile(riskProfile, project.LOC - totalTestVolume);
 }
 
