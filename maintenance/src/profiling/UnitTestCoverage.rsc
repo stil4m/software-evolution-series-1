@@ -15,11 +15,9 @@ public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 	set[FileAnalysis] nonTestFiles = { file | file <- project.files, !file.containsTestClass};
 	set[loc] testMethods = { method.location | file <- project.files, file.containsTestClass, class <- file.classes, method <- class.methods};
 	
-	int totalNonTestLoc = 0;
 	RiskProfile riskProfile = ();
 	for (FileAnalysis file <- nonTestFiles) {
 		fileUnitSize = (0 | it + method.LOC | class <- file.classes, method <- class.methods);
-		totalNonTestLoc += fileUnitSize;
 	
 		if (!isEmpty([ method | ClassAnalysis class <- file.classes, method <- class.methods, isTestable(method.location, m3Model)])) {
 			Risk risk = calculateCoverageRisk(file, m3Model, testMethods);
@@ -27,7 +25,8 @@ public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 		}
 	}
 	
-	return convertToProfile(riskProfile, totalNonTestLoc);
+	int totalTestVOLUME = (0 | it + file.LOC | file <- project.files, file.containsTestClass);
+	return convertToProfile(riskProfile, project.LOC - totalTestVolume);
 }
 
 private Risk calculateCoverageRisk(FileAnalysis file, M3 m3Model, set[loc] testMethods) {

@@ -7,24 +7,21 @@ import IO;
 import profiling::ProfilingUtil;
 
 public Profile profileUnitTestQuality(ProjectAnalysis project) {
-	int testLOC = 0;
-	
 	RiskProfile riskProfile = ();
 	for(FileAnalysis file <- project.files, file.containsTestClass) {
-		testLOC += file.LOC;
-		real averageAssertCountPerMethod = averageAssertCountPerMethod(file);
+		testUnitSize = ( 0 | it + method.LOC | class <- file.classes, method <- class.methods);
 		
-		Risk risk = getRisk(averageAssertCountPerMethod);
-		riskProfile[risk] ? 0 += file.LOC;
+		Risk risk = getRisk(averageAssertCountPerMethod(file));
+		riskProfile[risk] ? 0 += testUnitSize;
 	}
 	
-	return convertToProfile(riskProfile, testLOC);
+	int totalTestVOLUME = (0 | it + file.LOC | file <- project.files, file.containsTestClass);
+	return convertToProfile(riskProfile, totalTestVOLUME);
 }
 
 public Risk getRisk(real average) {
-	if (average <= .6) return veryHigh();
-	if (average <= .8) return high();
-	if (average <= 1) return moderate();	
+	if (average < 1) return veryHigh();
+	if (average == 1.) return moderate();	
 	return low();
 }
 
