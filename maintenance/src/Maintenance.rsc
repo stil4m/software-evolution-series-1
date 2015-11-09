@@ -75,8 +75,10 @@ public ProjectAnalysis analyseProject(M3 model) {
 
 public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	list[EffectiveLine] lines = relevantLines(cu);
-	
-	Declaration declaration = createAstFromFile(cu, false, javaVersion="1.7"); 
+
+	Declaration declaration = createAstFromFile(cu, false, javaVersion="1.7");
+	//map[loc,int] complexityPerMethod = methodComplexity(cu, model, declaration);
+	//iprintln(complexityPerMethod);
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses, declaration) | class <- classes];
@@ -87,14 +89,17 @@ public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses, Declaration declaration) {
 	bool isTestClass = cl in allTestClasses;
-	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass, declaration) | method <- methods(model,cl)];
+	
+	map[loc,int] complexityPerMethod = methodComplexity(methods(model,cl), model, declaration);
+	
+	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass, complexityPerMethod[method]) | method <- methods(model,cl)];
 	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
 	
 	return result + [*analyseClass(nestedClass, model, true, allTestClasses, declaration) | nestedClass <- nestedClasses(model,cl)];
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass, Declaration declaration) =
-		methodAnalysis(relevantLineCount(m), methodComplexity(m, model, declaration), inTestClass && isTestMethod(m), m);
+public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass, int complexity) =
+		methodAnalysis(relevantLineCount(m), complexity, inTestClass && isTestMethod(m), m);
 
 //In JUnit3 methods should Start with "test"
 private bool isTestMethod(loc m) = startsWith(m.file, "test");

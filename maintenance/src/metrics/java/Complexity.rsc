@@ -9,32 +9,28 @@ import Type;
 import String;
 import Node;
 
-public int methodComplexity(loc m, M3 model, Declaration declaration) {
+public map[loc,int] methodComplexity(set[loc] classMethods, M3 model, Declaration declaration) {
+	map[str,loc] absMethodLocations = ( replaceFirst("<rhs>", rhs.scheme, "") : lhs | <lhs, rhs> <- model@declarations, lhs in classMethods);
+	map[loc,int] result = ();
+	
 	visit (declaration) {
-		case x: \method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) :
-			{
-				loc realloc = head([rhs | <lhs, rhs> <- model@declarations, lhs == m]);
-				if(replaceFirst("<realloc>", realloc.scheme, "") == replaceFirst("<x@src>", x@src.scheme, "")) {
-					return complexityOfStatement(impl);
-				}
-			}
-		case x: \constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) :
-			{
-				loc realloc = head([rhs | <lhs, rhs> <- model@declarations, lhs == m]);
-				if(replaceFirst("<realloc>", realloc.scheme, "") == replaceFirst("<x@src>", x@src.scheme, "")) {
-					return complexityOfStatement(impl);
-				}
-			}
-			
+		case x: \method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) : {
+			result += handleMethodNode(x@src, absMethodLocations, impl);
+		}	
+		case x: \constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl): {
+			result += handleMethodNode(x@src, absMethodLocations, impl);
+		}
 	}
-	
-	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := declaration) {
-		return complexityOfStatement(impl);
-	} else if (\constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := declaration) {
-		return complexityOfStatement(impl);
+	iprintln(result);
+	return result;
+}
+
+private map[loc, int] handleMethodNode(loc src, map[str,loc] absMethodLocations, Statement impl) {
+	str key = replaceFirst("<src>", src.scheme, "");
+	if(absMethodLocations[key]?) {
+		return (absMethodLocations[key]: complexityOfStatement(impl));
 	}
-	
-	return 0;
+	return ();
 }
 
 int complexityOfStatement(Statement statement) {
