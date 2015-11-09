@@ -7,6 +7,7 @@ import Set;
 import String;
 import Set;
 import lang::java::jdt::m3::Core;
+import lang::java::jdt::m3::AST;
 
 import metrics::java::Complexity;
 import metrics::java::LOC;
@@ -15,11 +16,17 @@ import Domain;
 import Export;
 
 public loc exportPath = |project://maintenance/export.json|;
-//public loc projectLoc = |project://smallsql0.21_src|;
+
+public loc projectLoc = |project://smallsql0.21_src|;
 //public loc projectLoc = |project://hsqldb|;
-public loc projectLoc = |project://hello-world-java|;
+//public loc projectLoc = |project://hello-world-java|;
 
 public value mainFunction() {
+	map[int,int] m = ();
+	int foo() = { println("CALLED"); return 1;};
+	m[foo()] ? 0 += 1;
+
+
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
@@ -69,22 +76,25 @@ public ProjectAnalysis analyseProject(M3 model) {
 public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	list[EffectiveLine] lines = relevantLines(cu);
 	
+	Declaration declaration = createAstFromFile(cu, false, javaVersion="1.7"); 
+	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
-	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses) | class <- classes];
+	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses, declaration) | class <- classes];
 	
 	bool containsTestClass = any(ClassAnalysis cl <- classAnalysisses , cl.location in allTestClasses);	
 	return fileAnalysis(size(lines), classAnalysisses, lines, containsTestClass, cu);
 }
 
-public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses) {
+public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses, Declaration declaration) {
 	bool isTestClass = cl in allTestClasses;
-	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass) | method <- methods(model,cl)];
+	list[MethodAnalysis] methods = [analyseMethod(method, model, isTestClass, declaration) | method <- methods(model,cl)];
 	list[ClassAnalysis] result = [classAnalysis(methods, inner, cl)];
 	
-	return result + [*analyseClass(nestedClass, model, true, allTestClasses) | nestedClass <- nestedClasses(model,cl)];
+	return result + [*analyseClass(nestedClass, model, true, allTestClasses, declaration) | nestedClass <- nestedClasses(model,cl)];
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass) = methodAnalysis(relevantLineCount(m), methodComplexity(m, model), inTestClass && isTestMethod(m), m);
+public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass, Declaration declaration) =
+		methodAnalysis(relevantLineCount(m), methodComplexity(m, model, declaration), inTestClass && isTestMethod(m), m);
 
 //In JUnit3 methods should Start with "test"
 private bool isTestMethod(loc m) = startsWith(m.file, "test");
