@@ -39,7 +39,7 @@ angular
         src: '=',
         total: '='
       },
-      template: "<span>{{src}} Lines ({{src/total * 100 | number:2 }}%)</span>"
+      template: "<span>{{src || 0 }} Lines ({{(src||0)/total * 100 | number:2 }}%)</span>"
     }
   })
   .controller('ProfileCtrl', function ($scope) {
