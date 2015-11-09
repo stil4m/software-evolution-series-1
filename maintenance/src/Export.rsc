@@ -6,13 +6,15 @@ import lang::json::IO;
 import List;
 import String;
 
-public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l, map[str,datetime] timing) {
+public void exportToFile(ProjectAnalysis p, map[str,Profile] profile, loc l, map[str,datetime] timing, loc projectLoc) {
 	value json = (
 		"timing" : timingAsMap(timing),
 		"project" : projectAsMap(p),
 		"profile" : (k : profileToInt(profile[k]) | k <- profile)
 	);
-	writeFile(l, toJSON(json, true));
+	str output = toJSON(json, true);
+	//replaceAll(output, "");
+	writeFile(l, output);
 }
 
 private map[str,str] timingAsMap(map[str,datetime] timing) = (k : replaceAll("<timing[k]>","$", "") | k <- timing);
@@ -37,8 +39,11 @@ public map[str,value] projectAsMap(ProjectAnalysis p) {
 private map[str,value] fileAsMap(FileAnalysis f) =(
 	"location" : "<f.location.path>",
 	"lineCount" : "<f.LOC>",
+	"lines" : toEffectiveLines(f.lines),
 	"classes" : [classAsMap(c) | c <- f.classes]
 );
+
+private value toEffectiveLines(list[EffectiveLine] lines) = [("number" : ln.number, "content" : ln.content) | ln <- lines];
 
 private value classAsMap(ClassAnalysis classAnalysis) {
 	return (

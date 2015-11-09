@@ -33,13 +33,13 @@ angular
       return analysis.profile.volume.size - analysis.profile.unit_testing.unit_test_volume.test_volume;
     }
   })
-  .directive('linesPercentage', function() {
+  .directive('linesPercentage', function () {
     return {
-      scope : {
-        src : '=',
-        total : '='
+      scope: {
+        src: '=',
+        total: '='
       },
-      template : "<span>{{src}} Lines ({{src/total * 100 | number:2 }}%)</span>"
+      template: "<span>{{src}} Lines ({{src/total * 100 | number:2 }}%)</span>"
     }
   })
   .controller('ProfileCtrl', function ($scope) {
@@ -72,6 +72,52 @@ angular
         sum += s;
       });
       return Math.round(sum / results.length);
+    }
+  })
+  .controller('DuplicationCtrl', function ($scope) {
+    function splitInBlocks(numbers) {
+      var result = [];
+      var target = [];
+      var last = undefined;
+
+      numbers.forEach(function (n) {
+        if (last == null) {
+          target.push(n);
+        } else if (last + 1 == n) {
+          target.push(n);
+        } else {
+          result.push(target);
+          target = [n];
+        }
+        last = n;
+      });
+      result.push(target);
+      return result;
+    }
+
+    this.getDuplicatedBlocks = function (file) {
+      var target = $scope.analysis.project.files.filter(function (f) {
+        return f.location == file.path;
+      })[0];
+
+      var blocks = splitInBlocks(file.lines);
+      return blocks.map(function (block) {
+        return block.map(function (line) {
+          return target.lines[line];
+        });
+      });
+    }
+  })
+  .filter('asCodeBlock', function () {
+    return function (lines) {
+      return lines.map(function (i) {
+        return i.number + ":\t" + i.content;
+      }).join('\n')
+    }
+  })
+  .filter('fileName', function() {
+    return function(file) {
+      return file.substr(file.lastIndexOf("/") + 1);
     }
   })
   .filter('risk', function () {

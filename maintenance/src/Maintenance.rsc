@@ -17,14 +17,15 @@ import Domain;
 import Export;
 
 public loc exportPath = |project://maintenance/export.json|;
+//public loc projectLoc = |project://smallsql0.21_src|;
+//public loc projectLoc = |project://hsqldb|;
+public loc projectLoc = |project://hello-world-java|;
 
 public value mainFunction() {
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	m3Model = createM3FromEclipseProject(|project://smallsql0.21_src|);
-	//m3Model = createM3FromEclipseProject(|project://hsqldb|);
-	//m3Model = createM3FromEclipseProject(|project://hello-world-java|);
+	m3Model = createM3FromEclipseProject(projectLoc);
 	
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
@@ -50,7 +51,7 @@ public void sonar(M3 m3Model) {
 	exportToFile(p, projectProfile, exportPath, (
 		"start" : analysisStart,
 		"end": analysisEnd
-	));
+	), projectLoc);
 	
 	println("<printDateTime(now())> Done");
 	
@@ -68,7 +69,7 @@ public ProjectAnalysis analyseProject(M3 model) {
 }
 
 public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
-	list[EffectiveLine] lines = [effectiveLine(l.number, trim(l.content)) | l <- relevantLines(cu)];
+	list[EffectiveLine] lines = relevantLines(cu);
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses) | class <- classes];
