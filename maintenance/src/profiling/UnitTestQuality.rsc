@@ -9,7 +9,7 @@ import profiling::ProfilingUtil;
 public Profile profileUnitTestQuality(ProjectAnalysis project) {
 	RiskProfile riskProfile = ();
 	for(FileAnalysis file <- project.files, file.containsTestClass) {
-		testUnitSize = ( 0 | it + method.LOC | class <- file.classes, method <- class.methods);
+		testUnitSize = ( 0 | it + method.LOC | class <- file.classes, method <- class.methods, isTestMethod(method));
 		
 		Risk risk = getRisk(averageAssertCountPerMethod(file));
 		riskProfile[risk] ? 0 += testUnitSize;
@@ -26,13 +26,20 @@ public Risk getRisk(real average) {
 }
 
 public real averageAssertCountPerMethod(FileAnalysis fileAnalysis) {
-	int asserts = (0 | it + 1 | effectiveLine <- fileAnalysis.lines,
-		/\s*assert/ := effectiveLine.content 
-		|| /\s*verify/ := effectiveLine.content
-		|| /\s*check/ := effectiveLine.content
-		|| /\s*fail/ := effectiveLine.content);
-	
-	int testMethods = (0 | it + size(class.methods) | class <- fileAnalysis.classes);
-	
+	int asserts = (0 | it + 1 | effectiveLine <- fileAnalysis.lines, isTestContext(effectiveLine.content));
+	int testMethods = (0 | it + size([method | method <- class.methods, isTestMethod(method)]) | class <- fileAnalysis.classes);
 	return testMethods == 0 ? 0.0 : 1.0 * asserts / testMethods; 
+}
+
+private bool isTestMethod(method) {
+	return isTestContext(method.location.file);
+}
+
+private bool isTestContext(str s) {
+	return /\s*assert/ := s 
+		|| /\s*verify/ := s
+		|| /\s*check/ := s
+		|| /\s*test/ := s
+		|| /\s*should/ := s
+		|| /\s*fail/ := s;
 }
