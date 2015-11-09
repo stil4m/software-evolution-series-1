@@ -8,8 +8,6 @@ import String;
 import Set;
 import lang::java::jdt::m3::Core;
 
-import metrics::java::TestQuality;
-import metrics::java::TestMethods;
 import metrics::java::Complexity;
 import metrics::java::LOC;
 import profiling::Profiler;
