@@ -28,6 +28,10 @@ angular
     $scope.clickTab = function (tab) {
       $scope.activeTab = tab;
     };
+
+    $scope.linesOfNonTestCode = function (analysis) {
+      return analysis.profile.volume.size - analysis.profile.unit_testing.unit_test_volume.test_volume;
+    }
   })
   .directive('linesPercentage', function() {
     return {

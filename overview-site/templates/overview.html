@@ -45,25 +45,25 @@
 
         <table class="table">
             <tr>
-                <td>Low</td>
+                <td>Low Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.low" data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
-                <td>Moderate</td>
+                <td>Moderate Risk</td>
                 <td>
                 <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.moderate" data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
-                <td>High</td>
+                <td>High Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.high" data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
-                <td>Very High</td>
+                <td>Very High Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.very_high" data-total="analysis.profile.volume.size"></span>
                 </td>
@@ -90,25 +90,25 @@
 
         <table class="table">
             <tr>
-                <td>Low</td>
+                <td>Low Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.unit_size.low" data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
-                <td>Moderate</td>
+                <td>Moderate Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.unit_size.moderate" data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
-                <td>High</td>
+                <td>High Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.unit_size.high" data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
-                <td>Very High</td>
+                <td>Very High Risk</td>
                 <td>
                     <span data-lines-percentage data-src="analysis.profile.unit_size.very_high" data-total="analysis.profile.volume.size"></span>
                 </td>
@@ -118,7 +118,9 @@
 
     <section class="maintainability-concept">
         <h4>Unit testing</h4>
+        <p>Unit testing is composed by the average of test volume, test coverage and test quality.</p>
 
+        <h5>Test Volume</h5>
         <table class="table">
             <tr>
                 <td>Test Volume</td>
@@ -132,18 +134,62 @@
             </tr>
         </table>
 
-        <p>TODO: Represent these nicer:</p>
-
-
+        <h5>Test Quality</h5>
+        <p>The quality of test code relative to the total lines of test code.</p>
         <table class="table">
-            <tbody ng-repeat="(subTitle,subProfile) in analysis.profile.unit_testing">
-                <tr><th colspan="2">{{subTitle}}</th></tr>
+            <tr>
+                <td>Low Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.low" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Moderate Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.moderate" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>High Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.high" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Very High Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.very_high" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                </td>
+            </tr>
+        </table>
 
-                <tr ng-repeat="(key,value) in subProfile">
-                    <td>{{key}}</td>
-                    <td>{{value}}</td>
-                </tr>
-            </tbody>
+        <h5>Test Coverage</h5>
+        <p>The coverage of code relative to the total lines of source code (test lines excluded).</p>
+        <table class="table">
+            <tr>
+                <td>Low Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.low" data-total="linesOfNonTestCode(analysis)"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Moderate Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.moderate" data-total="linesOfNonTestCode(analysis)"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>High Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.high" data-total="linesOfNonTestCode(analysis)"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Very High Risk</td>
+                <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.very_high" data-total="linesOfNonTestCode(analysis)"></span>
+                </td>
+            </tr>
         </table>
 
     </section>
