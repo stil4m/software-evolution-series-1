@@ -6,7 +6,8 @@ import profiling::ProfilingUtil;
 public Profile profileUnitSize(ProjectAnalysis project) {
 	RiskProfile riskProfile = ();
 	for(file <- project.files, class <- file.classes, method <- class.methods) {
-		riskProfile[getUnitSizeRisk(method.LOC)] ? 0 += method.LOC;
+		Risk risk = getUnitSizeRisk(method.LOC);
+		riskProfile[risk] ? 0 += method.LOC;
 	}
 	return convertToProfile(riskProfile, project.LOC);
 }
