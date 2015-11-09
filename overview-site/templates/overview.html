@@ -47,25 +47,29 @@
             <tr>
                 <td>Low Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.low" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.low"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
                 <td>Moderate Risk</td>
                 <td>
-                <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.moderate" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.moderate"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
                 <td>High Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.high" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.high"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
                 <td>Very High Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.very_high" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.complexity_per_unit.very_high"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
         </table>
@@ -92,25 +96,29 @@
             <tr>
                 <td>Low Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_size.low" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.low"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
                 <td>Moderate Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_size.moderate" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.moderate"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
                 <td>High Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_size.high" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.high"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
             <tr>
                 <td>Very High Risk</td>
                 <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_size.very_high" data-total="analysis.profile.volume.size"></span>
+                    <span data-lines-percentage data-src="analysis.profile.unit_size.very_high"
+                          data-total="analysis.profile.volume.size"></span>
                 </td>
             </tr>
         </table>
@@ -118,79 +126,102 @@
 
     <section class="maintainability-concept">
         <h4>Unit testing</h4>
+
         <p>Unit testing is composed by the average of test volume, test coverage and test quality.</p>
 
-        <h5>Test Volume ({{analysis.profile.unit_testing.unit_test_volume.rating | risk }})</h5>
-        <table class="table">
-            <tr>
-                <td>Test Volume</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_volume.test_volume" data-total="analysis.profile.volume.size"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>Number of unit tests</td>
-                <td>{{analysis.profile.unit_testing.unit_test_volume.unit_test_count}}</td>
-            </tr>
-        </table>
+        <div class="sub-test-profile">
+            <h5>Test Volume ({{analysis.profile.unit_testing.unit_test_volume.rating | risk }})</h5>
+            <table class="table">
+                <tr>
+                    <td>Test Volume</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_volume.test_volume"
+                          data-total="analysis.profile.volume.size"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Number of unit tests</td>
+                    <td>{{analysis.profile.unit_testing.unit_test_volume.unit_test_count}}</td>
+                </tr>
+            </table>
+        </div>
 
-        <h5>Test Quality ({{analysis.profile.unit_testing.unit_test_quality.rating | risk }})</h5>
-        <p>The quality of test code relative to the total lines of test code.</p>
-        <table class="table">
-            <tr>
-                <td>Low Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.low" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>Moderate Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.moderate" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>High Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.high" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>Very High Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.very_high" data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
-                </td>
-            </tr>
-        </table>
+        <div class="sub-test-profile">
+            <h5>Test Quality ({{analysis.profile.unit_testing.unit_test_quality.rating | risk }})</h5>
 
-        <h5>Test Coverage ({{analysis.profile.unit_testing.unit_test_coverage.rating | risk }})</h5>
-        <p>The coverage of code relative to the total lines of source code (test lines excluded).</p>
-        <table class="table">
-            <tr>
-                <td>Low Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.low" data-total="linesOfNonTestCode(analysis)"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>Moderate Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.moderate" data-total="linesOfNonTestCode(analysis)"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>High Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.high" data-total="linesOfNonTestCode(analysis)"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>Very High Risk</td>
-                <td>
-                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.very_high" data-total="linesOfNonTestCode(analysis)"></span>
-                </td>
-            </tr>
-        </table>
+            <p>The quality of test code relative to the test volume.
+                The quality is determined by the number of asserts, checks, verifies and fails relative to the number of
+                test methods.</p>
+            <table class="table">
+                <tr>
+                    <td>Low Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.low"
+                          data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Moderate Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.moderate"
+                          data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>High Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.high"
+                          data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Very High Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_quality.very_high"
+                          data-total="analysis.profile.unit_testing.unit_test_volume.test_volume"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="sub-test-profile">
+            <h5>Test Coverage ({{analysis.profile.unit_testing.unit_test_coverage.rating | risk }})</h5>
 
+            <p>The coverage of code relative to (total volume - test volume). Suppose method x in class y.
+                The coverage is calculated by the complexity of x + the sum of the complexity of methods (indirectly)
+                called
+                by x within y - the number of (indirectly called methods by x)
+            </p>
+
+            <table class="table">
+                <tr>
+                    <td>Low Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.low"
+                          data-total="linesOfNonTestCode(analysis)"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Moderate Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.moderate"
+                          data-total="linesOfNonTestCode(analysis)"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>High Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.high"
+                          data-total="linesOfNonTestCode(analysis)"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Very High Risk</td>
+                    <td>
+                    <span data-lines-percentage data-src="analysis.profile.unit_testing.unit_test_coverage.very_high"
+                          data-total="linesOfNonTestCode(analysis)"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </section>
 </div>

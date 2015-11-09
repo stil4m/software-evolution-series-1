@@ -43,7 +43,7 @@ private Risk calculateCoverageRisk(FileAnalysis file, M3 m3Model, set[loc] testM
 		
 		int requiredNumberOfInvocations = method.cc + invokedComplexity - size(invokedMethods);
 		int invocationCount = ( 0 | it + 1 | <lhs,rhs> <- invocations, rhs == method.location);
-		real coverage = toReal(invocationCount) / requiredNumberOfInvocations;
+		real coverage = requiredNumberOfInvocations == 0 ? 0. : toReal(invocationCount) / requiredNumberOfInvocations;
 		
 		//Preven outliers 
 		coverages += min(coverage, 1.0); 

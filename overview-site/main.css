@@ -36,3 +36,9 @@ section.maintainability-concept {
 dl dt {
   padding-top: 20px;
 }
+
+.sub-test-profile {
+  padding-left: 10px;
+  margin-bottom:20px;
+  margin-top:10px;
+}

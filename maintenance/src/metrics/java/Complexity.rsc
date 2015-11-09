@@ -9,11 +9,28 @@ import Type;
 import String;
 import Node;
 
-public int methodComplexity(loc m, M3 model) {
-	Declaration t = getMethodASTEclipse(m, model=model);
-	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
+public int methodComplexity(loc m, M3 model, Declaration declaration) {
+	visit (declaration) {
+		case x: \method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) :
+			{
+				loc realloc = head([rhs | <lhs, rhs> <- model@declarations, lhs == m]);
+				if(replaceFirst("<realloc>", realloc.scheme, "") == replaceFirst("<x@src>", x@src.scheme, "")) {
+					return complexityOfStatement(impl);
+				}
+			}
+		case x: \constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) :
+			{
+				loc realloc = head([rhs | <lhs, rhs> <- model@declarations, lhs == m]);
+				if(replaceFirst("<realloc>", realloc.scheme, "") == replaceFirst("<x@src>", x@src.scheme, "")) {
+					return complexityOfStatement(impl);
+				}
+			}
+			
+	}
+	
+	if (\method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := declaration) {
 		return complexityOfStatement(impl);
-	} else if (\constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := t) {
+	} else if (\constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl) := declaration) {
 		return complexityOfStatement(impl);
 	}
 	
