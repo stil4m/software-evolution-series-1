@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title>Overview Site</title>
+    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./main.css"/>
+    <script src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./bower_components/angular/angular.min.js"></script>
+    <script src="./index.js"></script>
+</head>
+
+<body class="container">
+<dl>
+    <dt>1. The metric value (total LOC) and/or score for Volume deviate without good motivation</dt>
+    <dd>
+        We've used the <a href="http://www.dwheeler.com/sloccount/">sloccount</a> to verify our implementation. Our
+        implementation gives the same results on Java code as sloccount.<br> We have worked with bare lines and filter
+        out all the lines which have a comment. We preserve a state to do this and ignore inline comments.
+        We found using the AST wasn't convenient while it does not give a reasonable line numbers. We have tried and
+        also found that the solution on a small code base was much slower than our current implementation.
+    </dd>
+
+    <dt>2. The metric value (%) and/or score for Duplication deviate without good motivation</dt>
+    <dd>
+        We've work on the bare lines with the comments ignored. We use intermediate data which was produced by the LOC
+        count. Starting with a single line we traverse down a tree, based on the next lines for a set of files, passing
+        a state of the <code>currentDepth</code>. When we reach the 'target depth', we add the (line, files) to a
+        database and as well as the nodes that lay on top. For all other lines consult the database if we can use
+        intermediate results.<br> We tested the implementation on a small data set and also compared the results running
+        against smallsql and hsqldb.
+    </dd>
+
+    <dt>3. The risk profile and/or score for Unit Size deviate without good motivation</dt>
+    <dd>
+        We just count the lines and we have seen that the sizes correspond with the actual line sizes. We do not reason
+        about fancy one-liners.
+    </dd>
+
+    <dt>4. The risk profile and/or score for Unit Complexity deviate without good motivation</dt>
+    <dd>
+        We have read the McCabe's paper and decided to use a visit to count all branch possibilities. We included what
+        we analyzed are all the branching options within a Java program.
+    </dd>
+
+    <dt>5. The scores calculated for the maintainability aspects deviate without good motivation</dt>
+    <dd>
+        The SIG papers takes the average for each row. So do we. Thus we present the values as supposed.
+    </dd>
+
+    <dt>6. Your tool produces output that allows easy verification of the correctness of the result (metric values, risk
+        profiles, scores, etc. are neatly listed next to each other)
+    </dt>
+    <dd>
+        See website.
+    </dd>
+
+    <dt>7. You also implemented Test Quality and Stability and can argue their correctness</dt>
+    <dd>
+        We implemented three test properties:
+        <ul>
+            <li>
+                Number of asserts (including <code>verify</code>, <code>check</code> and <code>fail</code>. We expect
+                that the test utility methods are prefixed with one of the chosen prefixes.
+            </li>
+            <li>Amount of test code. Compared to the total LOC.</li>
+            <li>Minimal required test methods for testable method.</li>
+        </ul>
+    </dd>
+
+    <dt>8. Your tool produces correct output for hsqldb within the time span of the grading session (~ 30 minutes),
+        possibly with the clone detection turned off.
+    </dt>
+    <dd>We do.</dd>
+
+    <dt>9. You can demonstrate that your own code is of high maintainability and has proper automated tests</dt>
+    <dd>
+        We've created small methods. We tested the main components of our code, with small examples and with bigger
+        examples from an example <code>hello-world</code> project.
+    </dd>
+
+    <dt>10. You have found another metric in the literature that is not in the SIG Maintainability Model, and you can
+        argument why and how would it improve the results
+    </dt>
+    <dd>
+        We've read the paper "A Cohesion Measure for Classes in Object-Oriented Systems". This paper introduces a new
+        cohesion method for classes. We find that a cohesion detection method will
+        improve the maintainability model (maybe not exactly this method). We believe it will improve the following
+        aspects:
+        <ul>
+            <li>Analysability: When a class does different things that do not actually relate to each other, it is
+                harder to analyse.
+            </li>
+            <li>Changeability: When a class does different things it is harder to replace as a component in the
+                software, because the new 'thing' must do at least the same.
+            </li>
+        </ul>
+    </dd>
+</dl>
+</body>
+</html>
