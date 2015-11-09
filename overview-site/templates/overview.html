@@ -135,7 +135,8 @@
         </table>
 
         <h5>Test Quality</h5>
-        <p>The quality of test code relative to the total lines of test code.</p>
+        <p>The quality of test code relative to the test volume.
+            The quality is determined by the number of asserts, checks, verifies and fails relative to the number of test methods.</p>
         <table class="table">
             <tr>
                 <td>Low Risk</td>
@@ -164,7 +165,9 @@
         </table>
 
         <h5>Test Coverage</h5>
-        <p>The coverage of code relative to the total lines of source code (test lines excluded).</p>
+        <p>The coverage of code relative to (total volume - test volume). Suppose method x in class y.
+        The coverage is calculated by the complexity of  x + the sum of the complexity of methods (indirectly) called by x within y - the number of (indirectly called methods by x)
+        </p>
         <table class="table">
             <tr>
                 <td>Low Risk</td>
