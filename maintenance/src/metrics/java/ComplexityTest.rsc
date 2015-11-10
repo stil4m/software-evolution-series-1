@@ -2,9 +2,17 @@ module metrics::java::ComplexityTest
 
 import metrics::java::Complexity;
 import lang::java::jdt::m3::AST;
+import lang::java::jdt::m3::Core;
 import TestUtil;
 
-public int getComplexity(str className, str methodName) = methodComplexity(getMethod(className,methodName),v);
+public int getComplexity(str className, str methodName) {
+	loc cu = getCompilationUnit(className + ".java");
+	loc method = getMethod(className, methodName);
+	Declaration ast = createAstFromFile(cu, false, javaVersion="1.6");
+	
+	return methodComplexity({method}, getTestM3(), ast)[method]; 
+}
+
 
 test bool shouldGetComplexity1() = getComplexity("DoWhileStatement", "doSomething") == 2;
 test bool shouldGetComplexity2() = getComplexity("Ternary", "ternaryFoo") == 3;
