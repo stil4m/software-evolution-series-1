@@ -22,7 +22,7 @@ public set[LineRefs] computeDuplications(ProjectAnalysis project) {
 	LineDB db = buildDb(project);
 	db = filterByOccurences(2, db);
 	
-	return ({} | analyzeKey(key, db, it)[1] | key <- db);
+	return ({} | analyseKey(key, db, it)[1] | key <- db);
 }
 
 public map[FileAnalysis,list[int]] aggregateDuplications(set[LineRefs] duplications) {
@@ -52,7 +52,7 @@ private LineDB buildDb(ProjectAnalysis project) {
 	return db;
 }
 
-private tuple[bool,set[LineRefs],LineRefs] analyzeKey(str key, LineDB db, set[LineRefs] duplications) 
+private tuple[bool,set[LineRefs],LineRefs] analyseKey(str key, LineDB db, set[LineRefs] duplications) 
 	= computeDupTree(key, db[key], duplications, 1);
 
 private tuple[bool, set[LineRefs], LineRefs] computeDupTree(str key, LineRefs refs, set[LineRefs] duplications, int currentDepth) {
