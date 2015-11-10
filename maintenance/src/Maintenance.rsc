@@ -17,8 +17,8 @@ import Export;
 
 public loc exportPath = |project://maintenance/export.json|;
 
-public loc projectLoc = |project://smallsql0.21_src|;
-//public loc projectLoc = |project://hsqldb|;
+//public loc projectLoc = |project://smallsql0.21_src|;
+public loc projectLoc = |project://hsqldb|;
 //public loc projectLoc = |project://hello-world-java|;
 
 public value mainFunction() {

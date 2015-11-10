@@ -2,6 +2,7 @@ module profiling::UnitTesting
 
 import Domain;
 import IO;
+import DateTime;
 import util::Math;
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;

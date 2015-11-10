@@ -5,6 +5,7 @@ import IO;
 import util::Math;
 import List;
 import Set;
+import DateTime;
 
 import lang::java::jdt::m3::Core;
 import lang::java::jdt::m3::AST;
@@ -15,12 +16,16 @@ public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 	set[FileAnalysis] nonTestFiles = { file | file <- project.files, !file.containsTestClass};
 	set[loc] testMethods = { method.location | file <- project.files, file.containsTestClass, class <- file.classes, method <- class.methods};
 	
+	map[loc,set[Modifier]] modifierMap = toMap(m3Model@modifiers);
+	
+	
 	RiskProfile riskProfile = ();
 	for (FileAnalysis file <- nonTestFiles) {
 		fileUnitSize = (0 | it + method.LOC | class <- file.classes, method <- class.methods);
 	
-		if (!isEmpty([ method | ClassAnalysis class <- file.classes, method <- class.methods, isTestable(method.location, m3Model)])) {
-			Risk risk = calculateCoverageRisk(file, m3Model, testMethods);
+		set[MethodAnalysis] testableMethods = { method | ClassAnalysis class <- file.classes, method <- class.methods, isTestable(modifierMap[method.location]? {})};
+		if (!isEmpty(testableMethods)) {
+			Risk risk = calculateCoverageRisk(testableMethods, file, m3Model, testMethods);
 			riskProfile[risk] ? 0 += fileUnitSize;
 		}
 	}
@@ -29,28 +34,29 @@ public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 	return convertToProfile(riskProfile, project.LOC - totalTestVolume);
 }
 
-private Risk calculateCoverageRisk(FileAnalysis file, M3 m3Model, set[loc] testMethods) {
-	set[MethodAnalysis] methods = { method | class <- file.classes, method <- class.methods};
-	set[loc] methodLocs = {method.location | method <- methods};
-	rel[loc,loc] invocations = { <lhs,rhs> | <lhs,rhs> <- m3Model@methodInvocation, lhs in testMethods, rhs in methodLocs};
-	map[loc, int] methodComplexityMap = (() | it + (method.location : method.cc) | method <- methods); 
-	
-	list[real] coverages = [];
-	for(method <- methods, isTestable(method.location, m3Model)){
-		//Exclude recursive call
-		set[loc] invokedMethods = { <lhs,rhs> | <lhs,rhs> <- invocations+, lhs == method.location, rhs != method.location};
-		int invokedComplexity = (0 | it + methodComplexityMap[invokedMethod] | invokedMethod <- invokedMethods); 
-		
-		int requiredNumberOfInvocations = method.cc + invokedComplexity - size(invokedMethods);
-		int invocationCount = ( 0 | it + 1 | <lhs,rhs> <- invocations, rhs == method.location);
-		real coverage = requiredNumberOfInvocations == 0 ? 0. : toReal(invocationCount) / requiredNumberOfInvocations;
-		
-		//Preven outliers 
-		coverages += min(coverage, 1.0); 
+private Risk calculateCoverageRisk(set[MethodAnalysis] methods, FileAnalysis file, M3 m3Model, set[loc] testMethods) {
+	set[loc] methodLocs = {};
+	map[loc, int] methodComplexityMap = ();
+	for (method <- methods) {
+		methodLocs += method.location;
+		methodComplexityMap[method.location] = method.cc;
 	}
 	
-	real fileCoverage = sum(coverages) / size(coverages); 
+	rel[loc,loc] invocations = { <lhs,rhs> | <lhs,rhs> <- m3Model@methodInvocation, lhs in testMethods, rhs in methodLocs};
+	
+	real totalCoverage = (0. | it + computeMethodCoverage(method, invocations, methodComplexityMap) | method <- methods);	
+	real fileCoverage = totalCoverage / size(methods); 
 	return getCoverageRisk(fileCoverage);}
+
+private real computeMethodCoverage(MethodAnalysis method, rel[loc,loc] invocations, map[loc, int]  methodComplexityMap) {
+	set[loc] invokedMethods = { <lhs,rhs> | <lhs,rhs> <- invocations+, lhs == method.location, rhs != method.location};
+	int invokedComplexity = (0 | it + methodComplexityMap[invokedMethod] | invokedMethod <- invokedMethods); 
+	
+	int requiredNumberOfInvocations = method.cc + invokedComplexity - size(invokedMethods);
+	int invocationCount = ( 0 | it + 1 | <_,rhs> <- invocations, rhs == method.location);
+	real coverage = requiredNumberOfInvocations == 0 ? 0. : toReal(invocationCount) / requiredNumberOfInvocations;
+	return min(coverage, 1.0);
+}
 
 private Risk getCoverageRisk(real coverage) {
 	if (coverage <= .3) return veryHigh();
@@ -59,11 +65,4 @@ private Risk getCoverageRisk(real coverage) {
 	return low();
 }
 
-private set[Modifier] methodModifiers(loc method, M3 model) {
-	return { m | <lhs, m>  <- model@modifiers, lhs == method};
-}
-
-private bool isTestable(loc method, M3 m3Model) {
-	set[Modifier] modifiers = methodModifiers(method, m3Model);
-	return \public() in modifiers || \protected() in modifiers; 
-}
+private bool isTestable(set[Modifier] modifiers) = \public() in modifiers || \protected() in modifiers;
