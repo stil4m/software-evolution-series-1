@@ -32,14 +32,12 @@ public real averageAssertCountPerMethod(FileAnalysis fileAnalysis) {
 }
 
 private bool isTestMethod(method) {
-	return isTestContext(method.location.file);
+	return isTestContext(method.location.file) || /^\s*test/ := method.location.file;
 }
 
 private bool isTestContext(str s) {
 	return /^\s*assert/ := s 
 		|| /^\s*verify/ := s
 		|| /^\s*check/ := s
-		|| /^\s*test/ := s
-		|| /^\s*should/ := s
 		|| /\s*fail/ := s;
 }
