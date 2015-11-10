@@ -10,7 +10,7 @@ public int getComplexity(str className, str methodName) {
 	loc method = getMethod(className, methodName);
 	Declaration ast = createAstFromFile(cu, false, javaVersion="1.6");
 	
-	return methodComplexity({method}, v, ast)[method]; 
+	return methodComplexity({method}, getTestM3(), ast)[method]; 
 }
 
 
