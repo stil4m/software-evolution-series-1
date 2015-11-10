@@ -19,13 +19,13 @@ public Profile profileUnitTestQuality(ProjectAnalysis project) {
 	return convertToProfile(riskProfile, totalTestVOLUME);
 }
 
-public Risk getRisk(real average) {
+private Risk getRisk(real average) {
 	if (average < 1) return veryHigh();
 	if (average == 1.) return moderate();	
 	return low();
 }
 
-public real averageAssertCountPerMethod(FileAnalysis fileAnalysis) {
+private real averageAssertCountPerMethod(FileAnalysis fileAnalysis) {
 	int asserts = (0 | it + 1 | effectiveLine <- fileAnalysis.lines, isTestContext(effectiveLine.content));
 	int testMethods = (0 | it + size([method | method <- class.methods, isTestMethod(method)]) | class <- fileAnalysis.classes);
 	return testMethods == 0 ? 0.0 : 1.0 * asserts / testMethods; 

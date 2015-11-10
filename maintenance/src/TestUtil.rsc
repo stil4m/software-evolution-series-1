@@ -7,9 +7,14 @@ import List;
 import String;
 import IO;
 
-public M3 testM3Model = createM3FromEclipseProject(|project://hello-world-java|);
+import Maintenance;
+import Domain;
 
+private M3 testM3Model = createM3FromEclipseProject(|project://hello-world-java|);
 public M3 getTestM3() = testM3Model;
+
+private ProjectAnalysis projectAnalysis = analyseProject(getTestM3());
+public ProjectAnalysis getProjectAnalysis() = projectAnalysis; 
 
 public loc getCompilationUnit(str name) = head(toList({s | <s,_> <- getTestM3()@containment, s.scheme == "java+compilationUnit", s.file == name}));
 

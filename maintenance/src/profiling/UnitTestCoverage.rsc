@@ -15,9 +15,7 @@ import profiling::ProfilingUtil;
 public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 	set[FileAnalysis] nonTestFiles = { file | file <- project.files, !file.containsTestClass};
 	set[loc] testMethods = { method.location | file <- project.files, file.containsTestClass, class <- file.classes, method <- class.methods};
-	
 	map[loc,set[Modifier]] modifierMap = toMap(m3Model@modifiers);
-	
 	
 	RiskProfile riskProfile = ();
 	for (FileAnalysis file <- nonTestFiles) {
@@ -34,18 +32,18 @@ public Profile profileUnitTestCoverage(ProjectAnalysis project, M3 m3Model) {
 	return convertToProfile(riskProfile, project.LOC - totalTestVolume);
 }
 
-private Risk calculateCoverageRisk(set[MethodAnalysis] methods, FileAnalysis file, M3 m3Model, set[loc] testMethods) {
+private Risk calculateCoverageRisk(set[MethodAnalysis] testableMethods, FileAnalysis file, M3 m3Model, set[loc] testMethods) {
 	set[loc] methodLocs = {};
 	map[loc, int] methodComplexityMap = ();
-	for (method <- methods) {
+	for (method <- testableMethods) {
 		methodLocs += method.location;
 		methodComplexityMap[method.location] = method.cc;
 	}
 	
 	rel[loc,loc] invocations = { <lhs,rhs> | <lhs,rhs> <- m3Model@methodInvocation, lhs in testMethods, rhs in methodLocs};
 	
-	real totalCoverage = (0. | it + computeMethodCoverage(method, invocations, methodComplexityMap) | method <- methods);	
-	real fileCoverage = totalCoverage / size(methods); 
+	real totalCoverage = (0. | it + computeMethodCoverage(method, invocations, methodComplexityMap) | method <- testableMethods);	
+	real fileCoverage = totalCoverage / size(testableMethods); 
 	return getCoverageRisk(fileCoverage);}
 
 private real computeMethodCoverage(MethodAnalysis method, rel[loc,loc] invocations, map[loc, int]  methodComplexityMap) {
