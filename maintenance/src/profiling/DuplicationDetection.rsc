@@ -45,7 +45,9 @@ private LineDB buildDb(ProjectAnalysis project) {
 	for(file <- project.files) {
 		int index = 0;
 		for (effectiveLine <- file.lines) {
-			db = assocMap(db,trim(effectiveLine.content),<file,index>);
+			if (/^import / !:= effectiveLine.content && /^package / !:= effectiveLine.content) {
+				db = assocMap(db,trim(effectiveLine.content),<file,index>);
+			}
 			index += 1;
 		}
 	}

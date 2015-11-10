@@ -7,6 +7,10 @@ import IO;
 import Domain;
 
 public Profile convertToProfile(RiskProfile riskProfile, int totalLOC) {
+	if (totalLOC == 0) {
+		println("WARN: No total loc");
+		return minusMinus(());
+	} 
 	real moderate = toReal(riskProfile[moderate()] ? 0) / totalLOC;
 	real high = toReal(riskProfile[high()] ? 0) / totalLOC;
 	real veryHigh = toReal(riskProfile[veryHigh()] ? 0) / totalLOC;

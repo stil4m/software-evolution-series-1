@@ -25,7 +25,8 @@ public value mainFunction() {
 	datetime modelStart = now();
 	println("<printDateTime(modelStart)> Obtaining M3 Model");
 	
-	m3Model = createM3FromEclipseProject(projectLoc);
+	//m3Model = createM3FromEclipseProject(projectLoc);
+	m3Model = createM3FromDirectory(projectLoc);
 	
 	Duration d = now() - modelStart; 
 	println("Creating m3 took <d.minutes> minutes, <d.seconds> seconds, <d.milliseconds> milliseconds");
@@ -76,12 +77,12 @@ public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses, declaration) | class <- classes];
 	
-	bool containsTestClass = any(ClassAnalysis cl <- classAnalysisses , cl.location in allTestClasses);	
+	bool containsTestClass = any(ClassAnalysis cl <- classAnalysisses, cl.location in allTestClasses || /Test$/ := cl.location.file);	
 	return fileAnalysis(size(lines), classAnalysisses, lines, containsTestClass, cu);
 }
 
 public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] allTestClasses, Declaration declaration) {
-	bool isTestClass = cl in allTestClasses;
+	bool isTestClass = cl in allTestClasses || /Test$/ := cl.file;
 	
 	set[loc] classMethods = methods(model,cl);
 	map[loc,int] complexityPerMethod = methodComplexity(classMethods, model, declaration);
@@ -92,8 +93,7 @@ public list[ClassAnalysis] analyseClass(loc cl, M3 model, bool inner, set[loc] a
 	return result + [*analyseClass(nestedClass, model, true, allTestClasses, declaration) | nestedClass <- nestedClasses(model,cl)];
 }
 
-public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass, int complexity) =
-		methodAnalysis(relevantLineCount(m), complexity, inTestClass && isTestMethod(m), m);
+public MethodAnalysis analyseMethod(loc m, M3 model, bool inTestClass, int complexity) = methodAnalysis(relevantLineCount(m), complexity, inTestClass && isTestMethod(m), m);
 
 //In JUnit3 methods should Start with "test"
 private bool isTestMethod(loc m) = startsWith(m.file, "test");
