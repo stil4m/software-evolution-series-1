@@ -17,8 +17,8 @@ import Export;
 
 public loc exportPath = |project://maintenance/export.json|;
 
-//public loc projectLoc = |project://smallsql0.21_src|;
-public loc projectLoc = |project://hsqldb|;
+public loc projectLoc = |project://smallsql0.21_src|;
+//public loc projectLoc = |project://hsqldb|;
 //public loc projectLoc = |project://hello-world-java|;
 
 public value mainFunction() {
@@ -59,7 +59,7 @@ public void sonar(M3 m3Model) {
 
 public ProjectAnalysis analyseProject(M3 model) {
 	set[loc] compilationUnits = { x| <x,_> <- model@containment, isCompilationUnit(x)};
-	// Detect JUnit3 test classes 
+	// Detect JUnit3 test classes: Classes that extend TestCase
 	set[loc] allTestClasses = {x | <x,y> <- toList(model@extends)+, /TestCase/ := y.file};
 	
 	list[FileAnalysis] files = [analyseFile(c, model, allTestClasses) | c <- compilationUnits];
@@ -71,7 +71,7 @@ public ProjectAnalysis analyseProject(M3 model) {
 public FileAnalysis analyseFile(loc cu, M3 model, set[loc] allTestClasses) {
 	list[EffectiveLine] lines = relevantLines(cu);
 
-	Declaration declaration = createAstFromFile(cu, false, javaVersion="1.7");
+	Declaration declaration = createAstFromFile(cu, false, javaVersion="1.6");
 	
 	set[loc] classes = {x | <cu1, x> <- model@containment, cu1 == cu, isClass(x)};
 	list[ClassAnalysis] classAnalysisses = [*analyseClass(class, model, false, allTestClasses, declaration) | class <- classes];
