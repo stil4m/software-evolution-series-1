@@ -5,7 +5,6 @@ angular
     $scope.analysis = null;
     $http.get('./data.json').success(function (d) {
       $scope.analysis = d;
-      console.log(d);
     });
     $scope.lookupFile = function (data) {
       if (data == null) {
@@ -59,6 +58,15 @@ angular
       {name: 'Testability', columns: ['complexity_per_unit', 'unit_size', 'unit_testing']}
     ];
 
+    function findMedian(m) {
+        var middle = Math.floor((m.length - 1) / 2);
+        if (m.length % 2 == 1) {
+            return m[middle];
+        } else {
+            return Math.round((m[middle] + m[middle + 1]) / 2.0);
+        }
+    }
+
     self.getAverage = function (row) {
       var results = row.columns.map(function (id) {
         if ($scope.analysis.profile[id]) {
@@ -67,11 +75,8 @@ angular
       }).filter(function (i) {
         return i != null;
       });
-      var sum = 0;
-      results.forEach(function (s) {
-        sum += s;
-      });
-      return Math.round(sum / results.length);
+
+      return findMedian(results);
     }
   })
   .controller('DuplicationCtrl', function ($scope) {
