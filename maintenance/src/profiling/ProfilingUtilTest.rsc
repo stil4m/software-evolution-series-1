@@ -3,6 +3,18 @@ module profiling::ProfilingUtilTest
 import profiling::ProfilingUtil;
 import Domain;
 
+test bool shouldMergeProfiles() {
+	Profile a = plus(("key1":"value1"));
+	Profile b = minusMinus(("key2":"value2"));
+	Profile c = minusMinus(("key3":"value3"));
+	
+	return mergeProfiles([<"a", a>, <"b", b>, <"c", c>]) == minusMinus((
+    	"a":("key1":"value1","rating":4),
+    	"b":("key2":"value2","rating":1),
+    	"c":("key3":"value3","rating":1)
+  	));
+}
+
 // MinusMinus
 test bool shouldCreateMinusMinus1() = minusMinus(_) := convertToProfile((veryHigh():6),100);
 

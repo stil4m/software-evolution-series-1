@@ -1,5 +1,6 @@
 module profiling::ProfilingUtil
 
+import analysis::statistics::Descriptive;
 import util::Math;
 import List;
 import IO;
@@ -36,15 +37,15 @@ private str stringListKey(veryHigh()) = "very_high";
 
 public Profile mergeProfiles(lrel[str, Profile] profiles) {
 	ProfileData combinedProfileData = ();
-	real rating = 0.;
+	list[int] ratings = [];
 	
 	for (<subTitle, profile> <- profiles) {
 		int profileRating = profileToInt(profile);
-		rating += profileRating;
+		ratings += profileRating;
 		profile.profileData["rating"] = profileRating;
 		combinedProfileData[subTitle] = profile.profileData;
 	}
-	int newRating = round(rating / size(profiles));
+	int newRating = round(median(ratings));
 	return intToProfile(newRating, combinedProfileData);
 }
 
